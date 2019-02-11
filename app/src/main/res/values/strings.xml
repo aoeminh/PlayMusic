@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">PlayMusic</string>
+    <string name="title_home_fragment">Home</string>
+    <string name="title_search_fragment">Search</string>
+    <string name="text_title_playlist_fragment">Bolero hôm nay</string>
+    <string name="text_view_more_playlist_fragment">Xem thêm playlist</string>
+    <string name="text_theme_category_fragment">CHỦ ĐỀ VÀ THỂ LOẠI</string>
+    <string name="view_more_category_theme_fragment">Xem thêm</string>
+</resources>

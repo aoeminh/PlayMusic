@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+    <color name="tabIndicator_color_main">#12fa02</color>
+    <color name="tab_text_color_main">#000</color>
+    <color name="text_color_title_playlist_fragment">#000000</color>
+    <color name="text_color_view_more_playlist_fragmnt">#bababa</color>
+    <color name="text_color_advertise">#ffffff</color>
+    <color name="text_color_icon_item_playlist_fragmen">#ffff</color>
+</resources>

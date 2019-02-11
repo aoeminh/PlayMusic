@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<dimen name="height_icon_item_playlist_fragment">66.67dp</dimen>
+	<dimen name="item_height_playlist_fragment">146.67dp</dimen>
+	<dimen name="margin_botton_icon_item_playlist_fragmen">13.33dp</dimen>
+	<dimen name="margin_end_item_playlist_fragment">66.67dp</dimen>
+	<dimen name="margin_end_recyclerview_category_theme_fragment">10.67dp</dimen>
+	<dimen name="margin_right_item_playlist_fragment">10.67dp</dimen>
+	<dimen name="margin_right_song_content">53.33dp</dimen>
+	<dimen name="margin_start_icon_item_playlist_fragmen">20.00dp</dimen>
+	<dimen name="margin_start_recyclerview_category_theme_fragment">10.67dp</dimen>
+	<dimen name="margin_top_item_playlist_fragment">6.67dp</dimen>
+	<dimen name="marginl_left_item_playlist_fragment">10.67dp</dimen>
+	<dimen name="padding_left_tittle_category_theme_fragment">13.33dp</dimen>
+	<dimen name="padding_start_play_name_item_playlist_fragmen">6.67dp</dimen>
+	<dimen name="padding_top_icon_item_playlist_fragmen">13.33dp</dimen>
+	<dimen name="width_icon_item_playlist_fragment">66.67dp</dimen>
+	<dimen name="text_size_item_playlist_fragment">17.33sp</dimen>
+	<dimen name="text_size_song_content">17.33sp</dimen>
+	<dimen name="text_size_title_playlist_fragment">40.00sp</dimen>
+	<dimen name="text_size_tittle_category_theme_fragment">33.33sp</dimen>
+	<dimen name="text_size_view_more_playlist_fragment">26.67sp</dimen>
+</resources>

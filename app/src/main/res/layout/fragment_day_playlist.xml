@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+
+    <TextView
+        android:id="@+id/tv_title_playlist"
+        android:textColor="@color/text_color_title_playlist_fragment"
+        android:textStyle="bold"
+        android:textSize="@dimen/text_size_title_playlist_fragment"
+        android:text="@string/text_title_playlist_fragment"
+        android:gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rv_day_playlist"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tv_title_playlist"/>
+    <TextView
+        android:id="@+id/tv_viewmore_playlist_fragment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/text_view_more_playlist_fragment"
+        android:textSize="@dimen/text_size_view_more_playlist_fragment"
+        android:background="@color/text_color_view_more_playlist_fragmnt"
+        android:textStyle="bold"
+        android:layout_below="@+id/rv_day_playlist"
+        android:drawableStart="@drawable/iconmoreplaylist"
+        android:paddingEnd= "10dp"
+        android:drawablePadding="10dp"
+        android:layout_marginTop="5dp"
+        />
+
+</RelativeLayout>

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:scrollbars="none"
+    android:fillViewport="true"
+    >
+    <LinearLayout
+        android:id="@+id/ll_main"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <fragment
+            android:name="com.example.apple.playmusic.fragment.Fragment_Banner"
+            android:id="@+id/fragment_banner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+        <fragment
+            android:name="com.example.apple.playmusic.fragment.DayPlaylistFragment"
+            android:id="@+id/fragment_day_playlist"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+        <fragment
+            android:name="com.example.apple.playmusic.fragment.CategoryThemeFragment"
+            android:id="@+id/fragment_category_theme"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            />
+
+    </LinearLayout>
+
+
+</ScrollView>
