@@ -4,6 +4,7 @@ import com.example.apple.playmusic.model.Advertise;
 import com.example.apple.playmusic.model.Album;
 import com.example.apple.playmusic.model.CategoryTheme;
 import com.example.apple.playmusic.model.Playlist;
+import com.example.apple.playmusic.model.Song;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,4 +25,7 @@ public interface DataService {
 
     @GET("albumhot.php")
     Call<ArrayList<Album>> getAlbumHot();
+
+    @GET("lovesong.php")
+    Call<ArrayList<Song>> getLoveSong();
 }

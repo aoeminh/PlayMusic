@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="80dp"
+    android:orientation="horizontal"
+    android:weightSum="10"
+    >
+    <ImageView
+        android:id="@+id/im_ava_love_song"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="2"
+        android:scaleType="fitXY"/>
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="7"
+        android:weightSum="2"
+        android:orientation="vertical">
+
+        <TextView
+            android:maxLines="2"
+            android:id="@+id/tv_name_love_song"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:text="asfdfa"
+            android:textStyle="bold"
+            android:textColor="@color/text_color_title_playlist_fragment"
+            />
+        <TextView
+            android:id="@+id/tv_singer_love_song"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:text="Duyen phan"
+            android:textColor="#000"
+            android:textSize="@dimen/text_size_song_content"
+            android:layout_marginRight="@dimen/margin_right_song_content"
+            android:ellipsize="end"
+            android:maxLines="1"
+            />
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"/>
+    </LinearLayout>
+
+
+
+
+
+
+</LinearLayout>

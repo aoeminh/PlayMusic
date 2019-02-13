@@ -11,6 +11,7 @@ import com.example.apple.playmusic.model.Advertise;
 import com.example.apple.playmusic.model.Album;
 import com.example.apple.playmusic.model.CategoryTheme;
 import com.example.apple.playmusic.model.Playlist;
+import com.example.apple.playmusic.model.Song;
 import com.example.apple.playmusic.service.APIService;
 
 import java.util.ArrayList;
@@ -95,6 +96,24 @@ public class HomePresenter  implements IPresenterCallback{
             @Override
             public void onFailure(Call<ArrayList<Album>> call, Throwable t) {
                 Log.d("minhnq", "get album hot error " +t.getMessage());
+            }
+        });
+    }
+
+    @Override
+    public void requestLoveSong() {
+
+        APIService.getRetrofitClient().getLoveSong().enqueue(new Callback<ArrayList<Song>>() {
+            @Override
+            public void onResponse(Call<ArrayList<Song>> call, Response<ArrayList<Song>> response) {
+                if(response.isSuccessful()){
+                    view.responseLoveSong(response.body());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ArrayList<Song>> call, Throwable t) {
+                Log.d("minhnq", "get lovesong error " +t.getMessage());
             }
         });
     }
