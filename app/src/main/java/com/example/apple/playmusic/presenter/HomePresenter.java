@@ -8,6 +8,7 @@ import com.example.apple.playmusic.adapter.PlaylistAdapter;
 import com.example.apple.playmusic.contract.IPresenterCallback;
 import com.example.apple.playmusic.contract.IViewCallback;
 import com.example.apple.playmusic.model.Advertise;
+import com.example.apple.playmusic.model.Album;
 import com.example.apple.playmusic.model.CategoryTheme;
 import com.example.apple.playmusic.model.Playlist;
 import com.example.apple.playmusic.service.APIService;
@@ -77,6 +78,23 @@ public class HomePresenter  implements IPresenterCallback{
             public void onFailure(Call<CategoryTheme> call, Throwable t) {
                 Log.d("minhnq", "get category$theme error " +t.getMessage());
 
+            }
+        });
+    }
+
+    @Override
+    public void requestAlbumHot() {
+        APIService.getRetrofitClient().getAlbumHot().enqueue(new Callback<ArrayList<Album>>() {
+            @Override
+            public void onResponse(Call<ArrayList<Album>> call, Response<ArrayList<Album>> response) {
+                if(response.isSuccessful()){
+                    view.responseAlbumHot(response.body());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ArrayList<Album>> call, Throwable t) {
+                Log.d("minhnq", "get album hot error " +t.getMessage());
             }
         });
     }

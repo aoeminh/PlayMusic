@@ -17,6 +17,7 @@ import com.example.apple.playmusic.adapter.AdvertiseAdapter;
 import com.example.apple.playmusic.contract.IPresenterCallback;
 import com.example.apple.playmusic.contract.IViewCallback;
 import com.example.apple.playmusic.model.Advertise;
+import com.example.apple.playmusic.model.Album;
 import com.example.apple.playmusic.model.CategoryTheme;
 import com.example.apple.playmusic.model.Playlist;
 import com.example.apple.playmusic.presenter.HomePresenter;
@@ -122,6 +123,11 @@ public class Fragment_Banner extends Fragment implements IViewCallback {
 
     @Override
     public void responseCategoryTheme(CategoryTheme categoryThemes) {
+
+    }
+
+    @Override
+    public void responseAlbumHot(ArrayList<Album> albums) {
 
     }
 }

@@ -5,5 +5,5 @@ public interface IPresenterCallback {
     void requestBannerHome();
     void requestDayPlaylist();
     void requestCategoryTheme();
-
+    void requestAlbumHot();
 }
