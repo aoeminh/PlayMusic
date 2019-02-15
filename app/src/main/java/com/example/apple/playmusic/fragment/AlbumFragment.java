@@ -20,6 +20,7 @@ import com.example.apple.playmusic.model.Advertise;
 import com.example.apple.playmusic.model.Album;
 import com.example.apple.playmusic.model.CategoryTheme;
 import com.example.apple.playmusic.model.Playlist;
+import com.example.apple.playmusic.model.Song;
 import com.example.apple.playmusic.presenter.HomePresenter;
 
 import java.util.ArrayList;
@@ -72,6 +73,11 @@ public class AlbumFragment extends Fragment implements IViewCallback {
         layoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
         rvAlbumHot.setAdapter(adapter);
         rvAlbumHot.setLayoutManager(layoutManager);
+    }
+
+    @Override
+    public void responseLoveSong(ArrayList<Song> songs) {
+
     }
 
     void getData(){

@@ -25,14 +25,22 @@
             android:id="@+id/fragment_category_theme"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="@dimen/_10sdp"
             />
         <fragment
             android:name="com.example.apple.playmusic.fragment.AlbumFragment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/fragment_album"
+            android:layout_marginTop="@dimen/_10sdp"
             />
+
+        <fragment
+            android:name="com.example.apple.playmusic.fragment.LoveSongFragment"
+            android:id="@+id/fragment_lovesong"
+            android:layout_width="match_parent"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:layout_height="wrap_content"/>
 
     </LinearLayout>
 

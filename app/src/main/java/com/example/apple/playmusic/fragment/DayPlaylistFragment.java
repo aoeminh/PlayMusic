@@ -20,6 +20,7 @@ import com.example.apple.playmusic.model.Advertise;
 import com.example.apple.playmusic.model.Album;
 import com.example.apple.playmusic.model.CategoryTheme;
 import com.example.apple.playmusic.model.Playlist;
+import com.example.apple.playmusic.model.Song;
 import com.example.apple.playmusic.presenter.HomePresenter;
 import com.example.apple.playmusic.service.APIService;
 
@@ -102,6 +103,11 @@ public  class DayPlaylistFragment extends Fragment implements IViewCallback {
 
     @Override
     public void responseAlbumHot(ArrayList<Album> albums) {
+
+    }
+
+    @Override
+    public void responseLoveSong(ArrayList<Song> songs) {
 
     }
 }

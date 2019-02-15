@@ -12,16 +12,17 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:weightSum="3">
+        android:weightSum="3"
+        app:layout_constraintTop_toTopOf="parent">
 
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="2"
-            android:paddingStart="@dimen/padding_left_tittle_category_theme_fragment"
+            android:paddingStart="@dimen/_10sdp"
             android:text="@string/text_theme_category_fragment"
             android:textColor="@color/text_color_title_playlist_fragment"
-            android:textSize="@dimen/text_size_tittle_category_theme_fragment"
+            android:textSize="@dimen/_20ssp"
             android:textStyle="bold" />
 
         <TextView
@@ -30,16 +31,16 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="end"
-            android:paddingEnd="@dimen/padding_text_view_more_category_theme"
+            android:paddingEnd="@dimen/_10sdp"
             android:text="@string/view_more_category_theme_fragment"
-            android:textSize="@dimen/text_size_view_more_category_theme_fragment" />
+            android:textSize="@dimen/_17ssp" />
     </LinearLayout>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rv_category_theme_day"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/margin_top_recyclerview_category_theme"
+        android:layout_marginTop="@dimen/_10sdp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/linearLayout" />

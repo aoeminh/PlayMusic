@@ -19,7 +19,7 @@
             android:paddingStart="@dimen/padding_left_tittle_category_theme_fragment"
             android:text="ALBUM HOT"
             android:textColor="@color/text_color_title_playlist_fragment"
-            android:textSize="@dimen/text_size_tittle_category_theme_fragment"
+            android:textSize="@dimen/_20ssp"
             android:textStyle="bold" />
 
         <TextView
@@ -28,16 +28,15 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="end"
-            android:paddingEnd="@dimen/padding_text_view_more_category_theme"
+            android:paddingEnd="@dimen/_10sdp"
             android:text="@string/view_more_category_theme_fragment"
-            android:textSize="@dimen/text_size_view_more_category_theme_fragment" />
+            android:textSize="@dimen/_17ssp"/>
     </LinearLayout>
-
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rv_album_hot"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="@dimen/_8sdp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/linearLayout" />

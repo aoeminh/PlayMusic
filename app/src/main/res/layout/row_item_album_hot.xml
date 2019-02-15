@@ -22,14 +22,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/_30sdp"
                 android:textStyle="bold"
-                android:textSize="@dimen/_20ssp"
+                android:textSize="@dimen/_17ssp"
                 android:text="afsdfaf"/>
             <TextView
                 android:id="@+id/tv_album_singer_row_item"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/_20sdp"
                 android:textStyle="bold"
-                android:textSize="@dimen/_15ssp"
+                android:textSize="@dimen/_13ssp"
                 android:text="afsdfaf"/>
         </LinearLayout>
 
