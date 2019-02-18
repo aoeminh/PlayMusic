@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.example.apple.playmusic.R;
+import com.example.apple.playmusic.action.IOnItemClick;
 import com.example.apple.playmusic.model.Advertise;
 
 import java.util.ArrayList;
@@ -19,10 +20,12 @@ public class AdvertiseAdapter extends PagerAdapter {
 
     ArrayList<Advertise> advertiseArrayList = new ArrayList<>();
     Context context;
+    IOnItemClick iClickBannerItem;
 
-    public AdvertiseAdapter(ArrayList<Advertise> advertiseArrayList, Context context) {
+    public AdvertiseAdapter(ArrayList<Advertise> advertiseArrayList, Context context, IOnItemClick iClickBannerItem) {
         this.advertiseArrayList = advertiseArrayList;
         this.context = context;
+        this.iClickBannerItem =iClickBannerItem;
     }
 
     @Override
@@ -54,11 +57,19 @@ public class AdvertiseAdapter extends PagerAdapter {
         tvSongName.setText(advertise.getSongName());
         tvSongContent.setText(advertise.getAdvContent());
         container.addView(view);
+        view.setOnClickListener(view1 -> {
+            iClickBannerItem.onClickItem(position);
+        });
+
         return view;
     }
 
     @Override
     public void destroyItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
         container.removeView((View) object);
+    }
+
+    public interface IClickBannerItem{
+        void onClickBannerItem(int position);
     }
 }

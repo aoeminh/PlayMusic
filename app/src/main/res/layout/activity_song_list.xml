@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    android:id="@+id/coordinator_songlist"
+    tools:context=".activity.SongListActivity">
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/appbar_songlist"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_250sdp"
+        android:fitsSystemWindows="true"
+        >
+        <android.support.design.widget.CollapsingToolbarLayout
+            android:id="@+id/collap_songlist"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:expandedTitleGravity="center|bottom"
+            app:expandedTitleMarginBottom="@dimen/_33sdp"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed"
+
+            >
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/custom_banner_background_color"/>
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/tool_bar_songlist"
+                app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_75sdp"
+                android:elevation="@dimen/_6sdp"
+                app:layout_collapseMode="pin"/>
+            <ImageView
+                android:id="@+id/im_songlist_ava"
+                android:layout_width="@dimen/_150sdp"
+                android:layout_height="@dimen/_150sdp"
+                android:layout_marginBottom="@dimen/_40ssp"
+                android:layout_marginTop="@dimen/_20sdp"
+                android:layout_gravity="center"/>
+        </android.support.design.widget.CollapsingToolbarLayout>
+    </android.support.design.widget.AppBarLayout>
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/float_btn_songlist"
+        app:layout_behavior="@string/bottom_sheet_behavior"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_anchor="@id/appbar_songlist"
+        app:layout_anchorGravity="bottom|center"
+        android:src="@drawable/iconfloatingactionbutton"
+        android:backgroundTint="#7c04ec"
+        app:fabSize="normal"
+        android:scaleType="fitXY"/>
+    <android.support.v4.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        android:layout_marginTop="@dimen/_20sdp">
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rv_songlist"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+    </android.support.v4.widget.NestedScrollView>
+
+</android.support.design.widget.CoordinatorLayout>

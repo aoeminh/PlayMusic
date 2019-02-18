@@ -1,20 +1,15 @@
 package com.example.apple.playmusic.activity;
 
-import android.content.Intent;
 import android.support.design.widget.TabLayout;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 import com.example.apple.playmusic.R;
-import com.example.apple.playmusic.Song;
 import com.example.apple.playmusic.adapter.MainViewPagerAdapter;
 import com.example.apple.playmusic.fragment.HomeFragment;
 import com.example.apple.playmusic.fragment.SearchFragment;
 
-import java.util.ArrayList;
 import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {

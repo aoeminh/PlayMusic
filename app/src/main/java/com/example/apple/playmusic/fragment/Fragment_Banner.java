@@ -1,5 +1,6 @@
 package com.example.apple.playmusic.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -13,6 +14,8 @@ import android.view.ViewGroup;
 import android.widget.ViewFlipper;
 
 import com.example.apple.playmusic.R;
+import com.example.apple.playmusic.action.IOnItemClick;
+import com.example.apple.playmusic.activity.SongListActivity;
 import com.example.apple.playmusic.adapter.AdvertiseAdapter;
 import com.example.apple.playmusic.contract.IPresenterCallback;
 import com.example.apple.playmusic.contract.IViewCallback;
@@ -32,8 +35,9 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class Fragment_Banner extends Fragment implements IViewCallback {
+public class Fragment_Banner extends Fragment implements IViewCallback,IOnItemClick {
 
+    public static final String EXTRA_ADVERTISE="advertise";
     IPresenterCallback homePresenter;
     ViewPager viewPager;
     CircleIndicator circleIndicator;
@@ -98,7 +102,7 @@ public class Fragment_Banner extends Fragment implements IViewCallback {
     @Override
     public void responseBanner(ArrayList<Advertise> advertises) {
         advertiseList = advertises;
-        adapter = new AdvertiseAdapter(advertiseList,getActivity());
+        adapter = new AdvertiseAdapter(advertiseList,getActivity(),this);
         viewPager.setAdapter(adapter);
         circleIndicator.setViewPager(viewPager);
         handler = new Handler();
@@ -134,6 +138,15 @@ public class Fragment_Banner extends Fragment implements IViewCallback {
 
     @Override
     public void responseLoveSong(ArrayList<Song> songs) {
+
+    }
+
+    @Override
+    public void onClickItem(int position) {
+
+        Intent intent =new Intent(getActivity(), SongListActivity.class);
+        intent.putExtra(EXTRA_ADVERTISE,advertiseList.get(position));
+        getActivity().startActivity(intent);
 
     }
 }

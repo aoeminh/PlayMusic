@@ -10,7 +10,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;
+import retrofit2.http.Field;
+import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
+import retrofit2.http.POST;
 
 public interface DataService {
 
@@ -28,4 +31,8 @@ public interface DataService {
 
     @GET("lovesong.php")
     Call<ArrayList<Song>> getLoveSong();
+
+    @FormUrlEncoded
+    @POST("songlist.php")
+    Call<ArrayList<Song>> getSongListFromAdvertise(@Field("advId") String id);
 }

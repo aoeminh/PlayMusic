@@ -3,7 +3,9 @@ package com.example.apple.playmusic.model;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Advertise {
+import java.io.Serializable;
+
+public class Advertise implements Serializable {
 
     @SerializedName("AdID")
     @Expose

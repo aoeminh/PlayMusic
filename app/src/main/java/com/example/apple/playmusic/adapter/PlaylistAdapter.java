@@ -28,6 +28,9 @@ public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.ViewHo
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         View view = LayoutInflater.from(context).inflate(R.layout.row_item_playlist,viewGroup,false);
+        view.setOnClickListener(view1 -> {
+
+        });
         return new ViewHolder(view);
     }
 
