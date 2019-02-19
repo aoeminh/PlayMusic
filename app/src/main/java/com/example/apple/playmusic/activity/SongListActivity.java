@@ -74,6 +74,8 @@ public class SongListActivity extends AppCompatActivity implements ISongListView
         songAvatar = findViewById(R.id.im_songlist_ava);
         collapsingToolbarLayout.setExpandedTitleColor(Color.WHITE);
         collapsingToolbarLayout.setCollapsedTitleTextColor(Color.WHITE);
+        collapsingToolbarLayout.setCollapsedTitleTextAppearance(R.style.CollapsedAppBar);
+        collapsingToolbarLayout.setExpandedTitleTextAppearance(R.style.ExpandedAppBar);
         presenter = new SongListPresenter(this);
 
 
@@ -115,6 +117,7 @@ public class SongListActivity extends AppCompatActivity implements ISongListView
     public void onClickItem(int position) {
         Song song =songList.get(position);
         Glide.with(this).load(song.getSongImage()).into(songAvatar);
+        collapsingToolbarLayout.setTitle(song.getSongName());
 
     }
 
