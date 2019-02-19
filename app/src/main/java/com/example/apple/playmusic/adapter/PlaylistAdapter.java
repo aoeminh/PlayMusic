@@ -31,9 +31,6 @@ public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.ViewHo
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         View view = LayoutInflater.from(context).inflate(R.layout.row_item_playlist,viewGroup,false);
-        view.setOnClickListener(view1 -> {
-            mIOnItemClickPlaylist.onClickItem(i);
-        });
         return new ViewHolder(view);
     }
 
@@ -59,6 +56,9 @@ public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.ViewHo
             tvPlaylistName = itemView.findViewById(R.id.tv_title_item_playlist_fragment);
             imgBackground = itemView.findViewById(R.id.img_background_item_playlist_fragment);
             imgIcon = itemView.findViewById(R.id.img_icon_item_playlist_fragment);
+            itemView.setOnClickListener(view1 -> {
+                mIOnItemClickPlaylist.onClickItem(getAdapterPosition());
+            });
         }
     }
 }

@@ -102,33 +102,35 @@ public class SongListActivity extends AppCompatActivity implements ISongListView
     private void getDataIntent() {
         if (getIntent() != null) {
             Intent intent = getIntent();
-            switch (intent.getAction()) {
-                case Fragment_Banner.ACTION_ADVERTISE:
-                    advertise = (Advertise) getIntent().getSerializableExtra(Fragment_Banner.EXTRA_ADVERTISE);
-                    presenter.songlistRequest(String.valueOf(advertise.getAdID()));
-                    setViewCollaplayout(advertise.getSongName(), advertise.getAdImage(), advertise.getSongImage());
-
-                    break;
-                case DayPlaylistFragment.ACTION_PLAYLIST:
-                    mPlaylist = (Playlist) intent.getSerializableExtra(DayPlaylistFragment.EXTRA_PLAYLIST);
-                    presenter.songlistRequest(String.valueOf(mPlaylist.getPlaylistId()));
-                    setViewCollaplayout(mPlaylist.getPlaylistName(), mPlaylist.getPlaylistImage(), mPlaylist.getPlaylistIcon());
-                    break;
+            if (intent.hasExtra(Fragment_Banner.EXTRA_ADVERTISE)) {
+                advertise = (Advertise) getIntent().getSerializableExtra(Fragment_Banner.EXTRA_ADVERTISE);
+                presenter.songlistRequest(String.valueOf(advertise.getAdID()));
+                setViewCollaplayout(advertise.getSongName(), advertise.getAdImage(), advertise.getSongImage());
+            } else if (intent.hasExtra(DayPlaylistFragment.EXTRA_PLAYLIST)) {
+                mPlaylist = (Playlist) intent.getSerializableExtra(DayPlaylistFragment.EXTRA_PLAYLIST);
+                presenter.songlistFromPlaylist(String.valueOf(mPlaylist.getPlaylistId()));
+                setViewCollaplayout(mPlaylist.getPlaylistName(), mPlaylist.getPlaylistImage(), mPlaylist.getPlaylistIcon());
             }
-
         }
-
     }
 
-    @Override
-    public void songListResponse(ArrayList<Song> songs) {
-        songList = songs;
+    void setValueRecyclerView(ArrayList<Song> songListrv){
+        songList = songListrv;
         adapter = new SongListAdapter(this, songList, this);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         rvSonglist.setAdapter(adapter);
         rvSonglist.setLayoutManager(layoutManager);
+    }
 
+    @Override
+    public void songListResponse(ArrayList<Song> songs) {
+        setValueRecyclerView(songs);
+    }
+
+    @Override
+    public void songListFromPlaylistResponse(ArrayList<Song> songs) {
+        setValueRecyclerView(songs);
     }
 
     @Override
@@ -163,5 +165,6 @@ public class SongListActivity extends AppCompatActivity implements ISongListView
             BitmapDrawable bitmapDrawable = new BitmapDrawable(getResources(), bitmap);
             collapsingToolbarLayout.setBackground(bitmapDrawable);
         }
+
     }
 }

@@ -29,9 +29,7 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.ViewHo
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         View view = LayoutInflater.from(context).inflate(R.layout.row_item_song_list,viewGroup,false);
-        view.setOnClickListener(view1 -> {
-            iOnItemClick.onClickItem(i);
-        });
+
         return new ViewHolder(view);
     }
 
@@ -60,7 +58,9 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.ViewHo
             tvNumber = itemView.findViewById(R.id.tv_number_item_song_list);
             tvSinger = itemView.findViewById(R.id.tv_singer_item_songlist);
             imLike = itemView.findViewById(R.id.im_like_item_list__song);
-
+            itemView.setOnClickListener(view1 -> {
+                iOnItemClick.onClickItem(getAdapterPosition());
+            });
         }
     }
 }
