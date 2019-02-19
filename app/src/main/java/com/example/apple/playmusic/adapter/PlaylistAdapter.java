@@ -11,6 +11,8 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.example.apple.playmusic.R;
+import com.example.apple.playmusic.action.IOnItemClick;
+import com.example.apple.playmusic.action.IOnItemClickPlaylist;
 import com.example.apple.playmusic.model.Playlist;
 
 import java.util.ArrayList;
@@ -19,8 +21,9 @@ public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.ViewHo
 
     private ArrayList<Playlist> playlists = new ArrayList<>();
     private Context context;
-
-    public PlaylistAdapter(Context context,ArrayList<Playlist> playlists){
+    private IOnItemClick mIOnItemClickPlaylist;
+    public PlaylistAdapter(Context context,ArrayList<Playlist> playlists, IOnItemClick i){
+        this.mIOnItemClickPlaylist =i;
         this.context = context;
         this.playlists = playlists;
     }
@@ -29,7 +32,7 @@ public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.ViewHo
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         View view = LayoutInflater.from(context).inflate(R.layout.row_item_playlist,viewGroup,false);
         view.setOnClickListener(view1 -> {
-
+            mIOnItemClickPlaylist.onClickItem(i);
         });
         return new ViewHolder(view);
     }

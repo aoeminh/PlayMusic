@@ -38,6 +38,7 @@ import retrofit2.Response;
 public class Fragment_Banner extends Fragment implements IViewCallback,IOnItemClick {
 
     public static final String EXTRA_ADVERTISE="advertise";
+    public static final String ACTION_ADVERTISE = "action_advertise";
     IPresenterCallback homePresenter;
     ViewPager viewPager;
     CircleIndicator circleIndicator;
@@ -57,40 +58,7 @@ public class Fragment_Banner extends Fragment implements IViewCallback,IOnItemCl
 
 
     private void getData(){
-
         homePresenter.requestBannerHome();
-//
-//        APIService.getRetrofitClient().getAdvertise().enqueue(new Callback<ArrayList<Advertise>>() {
-//            @Override
-//            public void onResponse(@NonNull Call<ArrayList<Advertise>>  call, @NonNull Response<ArrayList<Advertise>> response) {
-//                if(response.isSuccessful()){
-//                    advertiseList = response.body();
-//                    adapter = new AdvertiseAdapter(advertiseList,getActivity());
-//                    viewPager.setAdapter(adapter);
-//                    circleIndicator.setViewPager(viewPager);
-//                    handler = new Handler();
-//                    runnable = new Runnable() {
-//                        @Override
-//                        public void run() {
-//                            currentItem = viewPager.getCurrentItem();
-//                            currentItem++;
-//                            if(currentItem >= adapter.getCount()){
-//                                currentItem=0;
-//                            }
-//                            viewPager.setCurrentItem(currentItem,true);
-//                            handler.postDelayed(runnable,4000);
-//                        }
-//                    };
-//                    handler.postDelayed(runnable,4000);
-//                    Log.d("minhnq","getData Banner Fragment " + advertiseList.size());
-//                }
-//            }
-//
-//            @Override
-//            public void onFailure(@NonNull Call<ArrayList<Advertise>> call, @NonNull Throwable t) {
-//                Log.d("minhnq","getData Banner Fragment Error: " +t.getMessage());
-//            }
-//        });
     }
 
     private void initView(View view){
@@ -146,6 +114,7 @@ public class Fragment_Banner extends Fragment implements IViewCallback,IOnItemCl
 
         Intent intent =new Intent(getActivity(), SongListActivity.class);
         intent.putExtra(EXTRA_ADVERTISE,advertiseList.get(position));
+        intent.setAction(ACTION_ADVERTISE);
         getActivity().startActivity(intent);
 
     }
