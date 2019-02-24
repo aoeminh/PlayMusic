@@ -15,6 +15,7 @@ import android.widget.TextView;
 
 import com.example.apple.playmusic.R;
 import com.example.apple.playmusic.action.IOnItemClick;
+import com.example.apple.playmusic.activity.ListPlaylistActivity;
 import com.example.apple.playmusic.activity.SongListActivity;
 import com.example.apple.playmusic.adapter.PlaylistAdapter;
 import com.example.apple.playmusic.contract.IPresenterCallback;
@@ -51,6 +52,7 @@ public  class DayPlaylistFragment extends Fragment implements IViewCallback, IOn
         initView(view);
 
         getData();
+        setAction();
 
         return view;
     }
@@ -58,26 +60,6 @@ public  class DayPlaylistFragment extends Fragment implements IViewCallback, IOn
     private void getData() {
 
         presenterCallback.requestDayPlaylist();
-//        APIService.getRetrofitClient().getPlaylist().enqueue(new Callback<ArrayList<Playlist>>() {
-//            @Override
-//            public void onResponse(@NonNull Call<ArrayList<Playlist>> call, @NonNull Response<ArrayList<Playlist>> response) {
-//
-//                if(response.isSuccessful()){
-//                    playlistArrayList = response.body();
-//                    adapter = new PlaylistAdapter(getActivity(),playlistArrayList);
-//                    LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
-//                    layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-//                    rv_playlist.setLayoutManager(layoutManager);
-//                    rv_playlist.setAdapter(adapter);
-//                    Log.d("minhnq", "get playlist " +response.body().size());
-//                }
-//            }
-//
-//            @Override
-//            public void onFailure(@NonNull Call<ArrayList<Playlist>> call, @NonNull Throwable t) {
-//                Log.d("minhnq", "get playlist error " +t.getMessage());
-//            }
-//        });
     }
 
     private void initView(View view){
@@ -85,6 +67,13 @@ public  class DayPlaylistFragment extends Fragment implements IViewCallback, IOn
         tvViewMore = view.findViewById(R.id.tv_viewmore_playlist_fragment);
         rv_playlist = view.findViewById(R.id.rv_day_playlist);
         presenterCallback = new HomePresenter(this);
+    }
+
+    private void setAction(){
+        tvViewMore.setOnClickListener(view1 -> {
+            Intent intent = new Intent(getActivity(), ListPlaylistActivity.class);
+            startActivity(intent);
+        });
     }
 
     @Override

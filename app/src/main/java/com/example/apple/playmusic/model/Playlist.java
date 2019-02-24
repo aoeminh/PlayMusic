@@ -23,6 +23,18 @@ public class Playlist implements Serializable {
     @Expose
     private String playlistIcon;
 
+    @SerializedName("songCount")
+    @Expose
+    private int songNumber;
+
+    public int getSongNumber() {
+        return songNumber;
+    }
+
+    public void setSongNumber(int songNumber) {
+        this.songNumber = songNumber;
+    }
+
     public int getPlaylistId() {
         return playlistId;
     }

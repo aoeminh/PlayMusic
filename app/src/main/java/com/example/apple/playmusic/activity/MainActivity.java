@@ -1,5 +1,8 @@
 package com.example.apple.playmusic.activity;
 
+import android.content.IntentFilter;
+import android.net.ConnectivityManager;
+import android.net.NetworkRequest;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -7,6 +10,7 @@ import android.os.Bundle;
 
 import com.example.apple.playmusic.R;
 import com.example.apple.playmusic.adapter.MainViewPagerAdapter;
+import com.example.apple.playmusic.connection.Connection;
 import com.example.apple.playmusic.fragment.HomeFragment;
 import com.example.apple.playmusic.fragment.SearchFragment;
 
@@ -16,13 +20,16 @@ public class MainActivity extends AppCompatActivity {
 
     TabLayout tabLayout;
     ViewPager viewPager;
+    Connection connection;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         findView();
         initView();
+        registerInternet();
     }
 
     void findView() {
@@ -42,7 +49,15 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    void registerInternet(){
+       connection = new Connection();
+       IntentFilter intentFilter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+       registerReceiver(connection,intentFilter);
+    }
 
-
-
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(connection);
+    }
 }
