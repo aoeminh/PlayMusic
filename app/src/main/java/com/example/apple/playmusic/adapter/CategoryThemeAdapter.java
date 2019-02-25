@@ -11,6 +11,7 @@ import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.example.apple.playmusic.R;
+import com.example.apple.playmusic.action.IOnItemClick;
 import com.example.apple.playmusic.model.Category;
 import com.example.apple.playmusic.model.CategoryTheme;
 import com.example.apple.playmusic.model.Theme;
@@ -24,10 +25,12 @@ public class CategoryThemeAdapter extends RecyclerView.Adapter<CategoryThemeAdap
     private ArrayList<Theme> themes = new ArrayList<>();
     private ArrayList<Category> categoryArrayList = new ArrayList<>();
     private ArrayList<String> listImageUrl = new ArrayList<>();
-    public CategoryThemeAdapter(Context context) {
+    private IOnItemClick iOnItemClick;
+
+    public CategoryThemeAdapter(Context context, IOnItemClick i) {
         this.context = context;
+        this.iOnItemClick = i;
     }
-    
 
     @NonNull
     @Override
@@ -51,6 +54,9 @@ public class CategoryThemeAdapter extends RecyclerView.Adapter<CategoryThemeAdap
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             imageView = itemView.findViewById(R.id.im_category_theme);
+            itemView.setOnClickListener(view -> {
+                iOnItemClick.onClickItem(getAdapterPosition());
+            });
         }
     }
 

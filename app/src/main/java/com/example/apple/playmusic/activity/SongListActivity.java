@@ -26,11 +26,14 @@ import com.example.apple.playmusic.action.IOnItemClick;
 import com.example.apple.playmusic.adapter.SongListAdapter;
 import com.example.apple.playmusic.contract.ISongListPresenter;
 import com.example.apple.playmusic.contract.ISongListViewCallback;
+import com.example.apple.playmusic.fragment.CategoryThemeFragment;
 import com.example.apple.playmusic.fragment.DayPlaylistFragment;
 import com.example.apple.playmusic.fragment.Fragment_Banner;
 import com.example.apple.playmusic.model.Advertise;
+import com.example.apple.playmusic.model.Category;
 import com.example.apple.playmusic.model.Playlist;
 import com.example.apple.playmusic.model.Song;
+import com.example.apple.playmusic.model.Theme;
 import com.example.apple.playmusic.presenter.SongListPresenter;
 
 import java.io.IOException;
@@ -56,6 +59,8 @@ public class SongListActivity extends AppCompatActivity implements ISongListView
     private ImageView songAvatar;
     private ArrayList<Song> songList;
     private SongListAdapter adapter;
+    private Theme theme;
+    private Category category;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -110,6 +115,8 @@ public class SongListActivity extends AppCompatActivity implements ISongListView
                 mPlaylist = (Playlist) intent.getSerializableExtra(DayPlaylistFragment.EXTRA_PLAYLIST);
                 presenter.songlistFromPlaylist(String.valueOf(mPlaylist.getPlaylistId()));
                 setViewCollaplayout(mPlaylist.getPlaylistName(), mPlaylist.getPlaylistImage(), mPlaylist.getPlaylistIcon());
+            }else if(intent.hasExtra(CategoryThemeFragment.EXTRA_THEME)){
+                theme = getIntent().getParcelableExtra(CategoryThemeFragment.EXTRA_THEME);
             }
         }
     }

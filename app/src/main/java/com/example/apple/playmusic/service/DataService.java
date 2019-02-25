@@ -5,6 +5,7 @@ import com.example.apple.playmusic.model.Album;
 import com.example.apple.playmusic.model.CategoryTheme;
 import com.example.apple.playmusic.model.Playlist;
 import com.example.apple.playmusic.model.Song;
+import com.example.apple.playmusic.model.Theme;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,6 +40,10 @@ public interface DataService {
     @FormUrlEncoded
     @POST("songlist.php")
     Call<ArrayList<Song>> getSongListFromPlaylist(@Field("playlistId") String id);
+
+    @FormUrlEncoded
+    @POST("songlist.php")
+    Call<ArrayList<Theme>> getSongFromTheme(@Field("themeId") String themeId);
 
     @GET("allPlaylist.php")
     Call<ArrayList<Playlist>> getAllPlaylist();

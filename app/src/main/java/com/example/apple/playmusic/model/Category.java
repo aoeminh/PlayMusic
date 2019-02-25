@@ -1,9 +1,12 @@
 package com.example.apple.playmusic.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Category {
+public class Category implements Parcelable{
 
     @SerializedName("idCategory")
     @Expose
@@ -51,5 +54,15 @@ public class Category {
 
     public void setCategoryImage(String categoryImage) {
         this.categoryImage = categoryImage;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+
     }
 }

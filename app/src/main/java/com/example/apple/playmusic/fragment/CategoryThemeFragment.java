@@ -1,5 +1,6 @@
 package com.example.apple.playmusic.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -12,21 +13,30 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.apple.playmusic.R;
+import com.example.apple.playmusic.action.IOnItemClick;
+import com.example.apple.playmusic.activity.SongListActivity;
 import com.example.apple.playmusic.adapter.CategoryThemeAdapter;
 import com.example.apple.playmusic.contract.IPresenterCallback;
 import com.example.apple.playmusic.contract.IViewCallback;
 import com.example.apple.playmusic.model.Advertise;
 import com.example.apple.playmusic.model.Album;
+import com.example.apple.playmusic.model.Category;
 import com.example.apple.playmusic.model.CategoryTheme;
 import com.example.apple.playmusic.model.Playlist;
 import com.example.apple.playmusic.model.Song;
+import com.example.apple.playmusic.model.Theme;
 import com.example.apple.playmusic.presenter.HomePresenter;
 
 import java.util.ArrayList;
 
-public class CategoryThemeFragment extends Fragment implements IViewCallback
+public class CategoryThemeFragment extends Fragment implements IViewCallback,IOnItemClick
 {
+
+    public static final String EXTRA_THEME="theme.extra";
+    public static final String ACTION_THEME ="theme.action";
+    public static final String EXTRA_CATEGORY ="category.action";
     private IPresenterCallback presenter;
+    private CategoryTheme categoryTheme;
     View view;
     private RecyclerView rvCategoryTheme;
     private TextView tvViewMore;
@@ -61,7 +71,8 @@ public class CategoryThemeFragment extends Fragment implements IViewCallback
 
     @Override
     public void responseCategoryTheme(CategoryTheme categoryThemes) {
-        adapter = new CategoryThemeAdapter(getActivity());
+        categoryTheme =categoryThemes;
+        adapter = new CategoryThemeAdapter(getActivity(),this);
         adapter.setListImageUrl(categoryThemes);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         layoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
@@ -76,6 +87,23 @@ public class CategoryThemeFragment extends Fragment implements IViewCallback
 
     @Override
     public void responseLoveSong(ArrayList<Song> songs) {
+
+    }
+
+    @Override
+    public void onClickItem(int position) {
+        ArrayList<Theme> themeArrayList  =categoryTheme.getThemeArrayList();
+        ArrayList<Category> categoryArrayList = categoryTheme.getCategoryArrayList();
+        Intent intent = new Intent(getActivity(),SongListActivity.class);
+        if(position< categoryTheme.getThemeArrayList().size()){
+            intent.putExtra(EXTRA_THEME,themeArrayList.get(position));
+            intent.setAction(ACTION_THEME);
+            startActivity(intent);
+        }else{
+            intent.putExtra(EXTRA_CATEGORY,categoryArrayList.get(position- themeArrayList.size() - 1));
+            intent.setAction(ACTION_THEME);
+            startActivity(intent);
+        }
 
     }
 }

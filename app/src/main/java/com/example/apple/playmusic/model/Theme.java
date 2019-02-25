@@ -1,9 +1,12 @@
 package com.example.apple.playmusic.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Theme {
+public class Theme implements Parcelable {
 
     @SerializedName("idChude")
     @Expose
@@ -39,5 +42,19 @@ public class Theme {
 
     public void setHinhChude(String hinhChude) {
         this.hinhChude = hinhChude;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+
+    }
+
+    public Theme() {
+        super();
     }
 }
