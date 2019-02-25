@@ -43,7 +43,7 @@ public class ListPlaylistApdater extends RecyclerView.Adapter<ListPlaylistApdate
         Playlist playlist= playlists.get(i);
         viewHolder.tvPlaylistName.setText(playlist.getPlaylistName());
         Glide.with(context).load(playlist.getPlaylistImage()).into(viewHolder.imgThumnail);
-        viewHolder.tvNumber.setText(playlist.getSongNumber());
+        viewHolder.tvNumber.setText(String.valueOf(playlist.getSongNumber()) + " " + context.getResources().getString(R.string.number_text));
     }
 
     @Override

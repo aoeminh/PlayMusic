@@ -11,7 +11,8 @@
         <LinearLayout
             android:layout_width="@dimen/_200sdp"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:background="#e1e0e0">
             <ImageView
                 android:id="@+id/im_row_item_album_hot"
                 android:layout_width="match_parent"
@@ -23,14 +24,18 @@
                 android:layout_height="@dimen/_30sdp"
                 android:textStyle="bold"
                 android:textSize="@dimen/_17ssp"
-                android:text="afsdfaf"/>
+                android:text="afsdfaf"
+                android:gravity="center_vertical"
+                android:paddingLeft="@dimen/_8sdp"/>
             <TextView
                 android:id="@+id/tv_album_singer_row_item"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/_20sdp"
                 android:textStyle="bold"
                 android:textSize="@dimen/_13ssp"
-                android:text="afsdfaf"/>
+                android:text="afsdfaf"
+                android:gravity="top"
+                android:paddingLeft="@dimen/_8sdp"/>
         </LinearLayout>
 
     </android.support.v7.widget.CardView>
