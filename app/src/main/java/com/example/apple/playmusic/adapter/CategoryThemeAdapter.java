@@ -46,7 +46,7 @@ public class CategoryThemeAdapter extends RecyclerView.Adapter<CategoryThemeAdap
 
     @Override
     public int getItemCount() {
-        return themes.size() + categoryArrayList.size();
+        return listImageUrl.size();
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {

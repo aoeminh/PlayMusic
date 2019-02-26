@@ -34,7 +34,7 @@ public class CategoryThemeFragment extends Fragment implements IViewCallback,IOn
 
     public static final String EXTRA_THEME="theme.extra";
     public static final String ACTION_THEME ="theme.action";
-    public static final String EXTRA_CATEGORY ="category.action";
+    public static final String EXTRA_CATEGORY ="category.extra";
     private IPresenterCallback presenter;
     private CategoryTheme categoryTheme;
     View view;
@@ -100,7 +100,7 @@ public class CategoryThemeFragment extends Fragment implements IViewCallback,IOn
             intent.setAction(ACTION_THEME);
             startActivity(intent);
         }else{
-            intent.putExtra(EXTRA_CATEGORY,categoryArrayList.get(position- themeArrayList.size() - 1));
+            intent.putExtra(EXTRA_CATEGORY,categoryArrayList.get(position- themeArrayList.size() ));
             intent.setAction(ACTION_THEME);
             startActivity(intent);
         }

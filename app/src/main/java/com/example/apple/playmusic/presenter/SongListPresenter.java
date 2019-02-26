@@ -5,6 +5,7 @@ import android.util.Log;
 import com.example.apple.playmusic.contract.ISongListPresenter;
 import com.example.apple.playmusic.contract.ISongListViewCallback;
 import com.example.apple.playmusic.model.Song;
+import com.example.apple.playmusic.model.Theme;
 import com.example.apple.playmusic.service.APIService;
 
 import java.util.ArrayList;
@@ -51,6 +52,42 @@ public class SongListPresenter implements ISongListPresenter{
             @Override
             public void onFailure(Call<ArrayList<Song>> call, Throwable t) {
                 Log.d(TAG,"error get list song from playlist" + t.getMessage() );
+            }
+        });
+    }
+
+    @Override
+    public void songlistFromTheme(String id) {
+        APIService.getRetrofitClient().getSongFromTheme(id).enqueue(new Callback<ArrayList<Song>>() {
+            @Override
+            public void onResponse(Call<ArrayList<Song>> call, Response<ArrayList<Song>> response) {
+                if(response.isSuccessful()){
+                    view.songlistFromThemeResponse(response.body());
+                    Log.d(TAG, "success get list song from theme size: " +response.body().size());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ArrayList<Song>> call, Throwable t) {
+                Log.d(TAG, "error get list song from theme : " + t.getMessage());
+            }
+        });
+    }
+
+    @Override
+    public void songlistFromCategory(String id) {
+        APIService.getRetrofitClient().getSongFromCategory(id).enqueue(new Callback<ArrayList<Song>>() {
+            @Override
+            public void onResponse(Call<ArrayList<Song>> call, Response<ArrayList<Song>> response) {
+                if(response.isSuccessful()){
+                    view.songlistFromCategoryResponse(response.body());
+                    Log.d(TAG, "success get list song from category size: " +response.body().size());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ArrayList<Song>> call, Throwable t) {
+                Log.d(TAG, "error get list song from category : " + t.getMessage());
             }
         });
     }

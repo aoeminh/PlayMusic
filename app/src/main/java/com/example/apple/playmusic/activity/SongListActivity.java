@@ -88,11 +88,11 @@ public class SongListActivity extends AppCompatActivity implements ISongListView
 
     }
 
-    private void setViewCollaplayout(String songName, String advImage, String songImage) {
-        collapsingToolbarLayout.setTitle(songName);
+    private void setViewCollaplayout(String name, String image) {
+        collapsingToolbarLayout.setTitle(name);
         GetImageFromUrlAsync getImageFromUrlAsync = new GetImageFromUrlAsync();
-        getImageFromUrlAsync.execute(advImage);
-        Glide.with(this).load(advImage).into(songAvatar);
+        getImageFromUrlAsync.execute(image);
+        Glide.with(this).load(image).into(songAvatar);
     }
 
     private void initToolbar() {
@@ -101,7 +101,6 @@ public class SongListActivity extends AppCompatActivity implements ISongListView
         toolbar.setNavigationOnClickListener(view -> {
             finish();
         });
-
     }
 
     private void getDataIntent() {
@@ -110,13 +109,19 @@ public class SongListActivity extends AppCompatActivity implements ISongListView
             if (intent.hasExtra(Fragment_Banner.EXTRA_ADVERTISE)) {
                 advertise = (Advertise) getIntent().getSerializableExtra(Fragment_Banner.EXTRA_ADVERTISE);
                 presenter.songlistRequest(String.valueOf(advertise.getAdID()));
-                setViewCollaplayout(advertise.getSongName(), advertise.getAdImage(), advertise.getSongImage());
+                setViewCollaplayout(advertise.getSongName(), advertise.getAdImage());
             } else if (intent.hasExtra(DayPlaylistFragment.EXTRA_PLAYLIST)) {
                 mPlaylist = (Playlist) intent.getSerializableExtra(DayPlaylistFragment.EXTRA_PLAYLIST);
                 presenter.songlistFromPlaylist(String.valueOf(mPlaylist.getPlaylistId()));
-                setViewCollaplayout(mPlaylist.getPlaylistName(), mPlaylist.getPlaylistImage(), mPlaylist.getPlaylistIcon());
+                setViewCollaplayout(mPlaylist.getPlaylistName(), mPlaylist.getPlaylistImage());
             }else if(intent.hasExtra(CategoryThemeFragment.EXTRA_THEME)){
-                theme = getIntent().getParcelableExtra(CategoryThemeFragment.EXTRA_THEME);
+                theme = intent.getParcelableExtra(CategoryThemeFragment.EXTRA_THEME);
+                presenter.songlistFromTheme(String.valueOf(theme.getIdChude()));
+                setViewCollaplayout(theme.getTenChude(),theme.getHinhChude());
+            }else if(intent.hasExtra(CategoryThemeFragment.EXTRA_CATEGORY)){
+                category = intent.getParcelableExtra(CategoryThemeFragment.EXTRA_CATEGORY);
+                presenter.songlistFromCategory(String.valueOf(category.getIdCategory()));
+                setViewCollaplayout(category.getCategoryName(),category.getCategoryImage());
             }
         }
     }
@@ -137,6 +142,16 @@ public class SongListActivity extends AppCompatActivity implements ISongListView
 
     @Override
     public void songListFromPlaylistResponse(ArrayList<Song> songs) {
+        setValueRecyclerView(songs);
+    }
+
+    @Override
+    public void songlistFromThemeResponse(ArrayList<Song> songs) {
+        setValueRecyclerView(songs);
+    }
+
+    @Override
+    public void songlistFromCategoryResponse(ArrayList<Song> songs) {
         setValueRecyclerView(songs);
     }
 

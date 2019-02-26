@@ -31,10 +31,12 @@
                 android:id="@+id/tool_bar_songlist"
                 app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/_75sdp"
+                android:layout_height="@dimen/_50sdp"
                 android:elevation="@dimen/_6sdp"
+                android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
                 app:layout_collapseMode="pin"/>
             <ImageView
+                android:scaleType="fitXY"
                 android:id="@+id/im_songlist_ava"
                 android:layout_width="@dimen/_150sdp"
                 android:layout_height="@dimen/_150sdp"
@@ -49,10 +51,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_anchor="@id/appbar_songlist"
-        app:layout_anchorGravity="bottom|center"
+        app:layout_anchorGravity="bottom|right"
+        android:layout_marginRight="@dimen/_50sdp"
         android:src="@drawable/iconfloatingactionbutton"
         android:backgroundTint="#7c04ec"
-        app:fabSize="normal"
+        app:fabSize="mini"
         android:scaleType="fitXY"/>
     <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"

@@ -56,13 +56,39 @@ public class Category implements Parcelable{
         this.categoryImage = categoryImage;
     }
 
+
     @Override
     public int describeContents() {
         return 0;
     }
 
     @Override
-    public void writeToParcel(Parcel parcel, int i) {
-
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(this.idCategory);
+        dest.writeInt(this.idChude);
+        dest.writeString(this.categoryName);
+        dest.writeString(this.categoryImage);
     }
+
+    public Category() {
+    }
+
+    protected Category(Parcel in) {
+        this.idCategory = in.readInt();
+        this.idChude = in.readInt();
+        this.categoryName = in.readString();
+        this.categoryImage = in.readString();
+    }
+
+    public static final Creator<Category> CREATOR = new Creator<Category>() {
+        @Override
+        public Category createFromParcel(Parcel source) {
+            return new Category(source);
+        }
+
+        @Override
+        public Category[] newArray(int size) {
+            return new Category[size];
+        }
+    };
 }

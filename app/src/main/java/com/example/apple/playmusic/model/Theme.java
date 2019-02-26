@@ -44,17 +44,39 @@ public class Theme implements Parcelable {
         this.hinhChude = hinhChude;
     }
 
+
+    public Theme() {
+        super();
+    }
+
+
     @Override
     public int describeContents() {
         return 0;
     }
 
     @Override
-    public void writeToParcel(Parcel parcel, int i) {
-
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(this.idChude);
+        dest.writeString(this.tenChude);
+        dest.writeString(this.hinhChude);
     }
 
-    public Theme() {
-        super();
+    protected Theme(Parcel in) {
+        this.idChude = in.readInt();
+        this.tenChude = in.readString();
+        this.hinhChude = in.readString();
     }
+
+    public static final Creator<Theme> CREATOR = new Creator<Theme>() {
+        @Override
+        public Theme createFromParcel(Parcel source) {
+            return new Theme(source);
+        }
+
+        @Override
+        public Theme[] newArray(int size) {
+            return new Theme[size];
+        }
+    };
 }

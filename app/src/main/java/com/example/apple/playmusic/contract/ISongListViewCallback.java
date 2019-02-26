@@ -8,4 +8,6 @@ public interface ISongListViewCallback {
 
     void songListResponse(ArrayList<Song> songs);
     void songListFromPlaylistResponse(ArrayList<Song> songs);
+    void songlistFromThemeResponse(ArrayList<Song> songs);
+    void songlistFromCategoryResponse(ArrayList<Song> songs);
 }
