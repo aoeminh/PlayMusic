@@ -1,9 +1,12 @@
 package com.example.apple.playmusic.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Song {
+public class Song  implements Parcelable{
 
     @SerializedName("songId")
     @Expose
@@ -28,6 +31,27 @@ public class Song {
     @SerializedName("likeNumber")
     @Expose
     private int likeNumber;
+
+    protected Song(Parcel in) {
+        songId = in.readInt();
+        songName = in.readString();
+        songImage = in.readString();
+        singer = in.readString();
+        songlink = in.readString();
+        likeNumber = in.readInt();
+    }
+
+    public static final Creator<Song> CREATOR = new Creator<Song>() {
+        @Override
+        public Song createFromParcel(Parcel in) {
+            return new Song(in);
+        }
+
+        @Override
+        public Song[] newArray(int size) {
+            return new Song[size];
+        }
+    };
 
     public int getSongId() {
         return songId;
@@ -75,5 +99,21 @@ public class Song {
 
     public void setLikeNumber(int likeNumber) {
         this.likeNumber = likeNumber;
+    }
+
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeInt(songId);
+        parcel.writeString(songName);
+        parcel.writeString(songImage);
+        parcel.writeString(singer);
+        parcel.writeString(songlink);
+        parcel.writeInt(likeNumber);
     }
 }

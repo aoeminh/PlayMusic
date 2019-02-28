@@ -36,4 +36,5 @@ public class MainViewPagerAdapter extends FragmentStatePagerAdapter {
         arrayTitle.add(title);
     }
 
+
 }

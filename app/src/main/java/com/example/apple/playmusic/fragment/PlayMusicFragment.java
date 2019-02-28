@@ -1,16 +1,19 @@
-package com.example.apple.playmusic.activity;
+package com.example.apple.playmusic.fragment;
 
 import android.annotation.SuppressLint;
 import android.net.Uri;
-import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ProgressBar;
 
 import com.example.apple.playmusic.R;
-import com.example.apple.playmusic.adapter.PlayMusicAdapter;
+import com.example.apple.playmusic.activity.PlayMusicActivity;
 import com.example.apple.playmusic.model.Song;
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.ExoPlaybackException;
@@ -26,21 +29,19 @@ import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
-import com.google.android.exoplayer2.trackselection.MappingTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.BandwidthMeter;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
-import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
 import com.google.android.exoplayer2.upstream.TransferListener;
 import com.google.android.exoplayer2.util.Util;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 
-public class PlayMusicActivity extends AppCompatActivity {
+public class PlayMusicFragment extends Fragment {
+
     PlayerView playerView;
     private static final String KEY_PLAY_WHEN_READY = "play_when_ready";
     private static final String KEY_WINDOW = "window";
@@ -57,52 +58,56 @@ public class PlayMusicActivity extends AppCompatActivity {
     private BandwidthMeter bandwidthMeter =  new DefaultBandwidthMeter();
 
     private ProgressBar mProgressBar;
-    private ViewPager viewPager;
-    private PlayMusicAdapter adapter;
-    private ArrayList<Song> songs;
+    private Song song;
+
+    public static PlayMusicFragment newInstance(Song song){
+        PlayMusicFragment fragment = new PlayMusicFragment();
+        Bundle bundle = new Bundle();
+        bundle.putParcelable("song",song);
+        fragment.setArguments(bundle);
+        return fragment;
+    }
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_play_music);
-//        playerView = findViewById(R.id.video_view);
-//        mProgressBar = findViewById(R.id.progress_bar);
-//        if (savedInstanceState != null) {
-//
-//
-//                playWhenReady = savedInstanceState.getBoolean(KEY_PLAY_WHEN_READY);
-//                currentWindow = savedInstanceState.getInt(KEY_WINDOW);
-//                playbackPosition = savedInstanceState.getLong(KEY_POSITION);
-//
-//        }
-//
-//        shouldAutoPlay = true;
-//        mediaDataSourceFactory = new DefaultDataSourceFactory(this, Util.getUserAgent(this, "mediaPlayerSample"),
-//                (TransferListener<? super DataSource>) bandwidthMeter);
-//        initializePlayer();
-        if(getIntent() !=null){
-            songs = getIntent().getParcelableArrayListExtra("song");
-            Log.d("minh", "" + songs.size());
-            if(songs.size()>0){
-                adapter = new PlayMusicAdapter(getSupportFragmentManager(),songs);
-            }
+        if(getArguments() !=null){
+            song = getArguments().getParcelable("song");
+
         }
-        viewPager =findViewById(R.id.view_pager_play_activity);
-        viewPager.setAdapter(adapter);
 
     }
 
-    private void initializePlayer() {
-        Uri[] uris = new Uri[2];
-        uris[0] = Uri.parse("https://aoeminh1993.000webhostapp.com/Song/Album/Bolero%20Tinh%20yeu/Anh-Da-Thay-Long-Duong-Hong-Loan.mp3");
-        uris[1] = Uri.parse("https://aoeminh1993.000webhostapp.com/Song/Album/NgayChuaGiongBaoNguoiBatTuOst-BuiLanHuong-5708274.mp3");
-        playerView.requestFocus();
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+
+        View view= inflater.inflate(R.layout.fragment_play_music,container,false);
+        playerView = view.findViewById(R.id.video_view);
+        mProgressBar = view.findViewById(R.id.progress_bar);
+        if (savedInstanceState != null) {
+
+            playWhenReady = savedInstanceState.getBoolean(KEY_PLAY_WHEN_READY);
+            currentWindow = savedInstanceState.getInt(KEY_WINDOW);
+            playbackPosition = savedInstanceState.getLong(KEY_POSITION);
+
+        }
+
+        shouldAutoPlay = true;
+        mediaDataSourceFactory = new DefaultDataSourceFactory(getActivity(), Util.getUserAgent(getActivity(), "mediaPlayerSample"),
+                (TransferListener<? super DataSource>) bandwidthMeter);
+        initializePlayer(song.getSonglink());
+        return view;
+    }
+
+    private void initializePlayer(String url) {
+         playerView.requestFocus();
 
         AdaptiveTrackSelection.Factory videoTrackSelectionFactory = new  AdaptiveTrackSelection.Factory(bandwidthMeter);
 
         trackSelector = new DefaultTrackSelector(videoTrackSelectionFactory);
         lastSeenTrackGroupArray = null;
 
-        player = ExoPlayerFactory.newSimpleInstance(this, trackSelector);
+        player = ExoPlayerFactory.newSimpleInstance(getActivity(), trackSelector);
 
         playerView.setPlayer(player);
 
@@ -112,7 +117,29 @@ public class PlayMusicActivity extends AppCompatActivity {
             playWhenReady = shouldAutoPlay;
         }
         MediaSource mediaSource =  new ExtractorMediaSource.Factory(mediaDataSourceFactory)
-                .createMediaSource(Uri.parse("https://aoeminh1993.000webhostapp.com/Song/Album/NgayChuaGiongBaoNguoiBatTuOst-BuiLanHuong-5708274.mp3"));
+                .createMediaSource(Uri.parse(url));
+        ConcatenatingMediaSource concatenatingMediaSource = new ConcatenatingMediaSource();
+//        MediaSource[] mediaSources = new MediaSource[uris.length];
+//        for (int i = 0; i< mediaSources.length ; i++){
+//            mediaSources[i] = new ExtractorMediaSource.Factory(mediaDataSourceFactory).createMediaSource(uris[i]);
+//        }
+//
+//        concatenatingMediaSource.addMediaSources(0, Arrays.asList(mediaSources));
+        boolean haveStartPosition = currentWindow != C.INDEX_UNSET;
+        if (haveStartPosition) {
+            player.seekTo(currentWindow, playbackPosition);
+        }
+
+        player.prepare(mediaSource, !haveStartPosition, false);
+        player.setPlayWhenReady(true);
+        player.setRepeatMode(Player.REPEAT_MODE_ALL);
+
+    }
+
+    public ConcatenatingMediaSource setDataForConcatenatingMediaSource(){
+        Uri[] uris = new Uri[2];
+        uris[0] = Uri.parse("https://aoeminh1993.000webhostapp.com/Song/Album/Bolero%20Tinh%20yeu/Anh-Da-Thay-Long-Duong-Hong-Loan.mp3");
+        uris[1] = Uri.parse("https://aoeminh1993.000webhostapp.com/Song/Album/NgayChuaGiongBaoNguoiBatTuOst-BuiLanHuong-5708274.mp3");
         ConcatenatingMediaSource concatenatingMediaSource = new ConcatenatingMediaSource();
         MediaSource[] mediaSources = new MediaSource[uris.length];
         for (int i = 0; i< mediaSources.length ; i++){
@@ -120,42 +147,30 @@ public class PlayMusicActivity extends AppCompatActivity {
         }
 
         concatenatingMediaSource.addMediaSources(0, Arrays.asList(mediaSources));
-        boolean haveStartPosition = currentWindow != C.INDEX_UNSET;
-        if (haveStartPosition) {
-            player.seekTo(currentWindow, playbackPosition);
-        }
-
-        player.prepare(concatenatingMediaSource, !haveStartPosition, false);
-        player.setPlayWhenReady(true);
-        player.setRepeatMode(Player.REPEAT_MODE_ALL);
-
+        return concatenatingMediaSource;
     }
-    private MediaSource buildMediaSource(Uri uri) {
-        return new ExtractorMediaSource.Factory(
-                new DefaultHttpDataSourceFactory("exoplayer-codelab")).
-                createMediaSource(uri);
-    }
+
     @Override
     public void onStart() {
         super.onStart();
         if (Util.SDK_INT > 23) {
-//            initializePlayer();
+            initializePlayer(song.getSonglink());
         }
     }
 
     @Override
     public void onResume() {
         super.onResume();
-//        hideSystemUi();
+        hideSystemUi();
         if ((Util.SDK_INT <= 23 || player == null)) {
-//            initializePlayer();
+            initializePlayer(song.getSonglink());
         }
     }
     @Override
     public void onPause() {
         super.onPause();
         if (Util.SDK_INT <= 23) {
-//            releasePlayer();
+            releasePlayer();
         }
     }
 
@@ -174,18 +189,18 @@ public class PlayMusicActivity extends AppCompatActivity {
     public void onStop() {
         super.onStop();
         if (Util.SDK_INT > 23) {
-//            releasePlayer();
+            releasePlayer();
         }
     }
-//    @SuppressLint("InlinedApi")
-//    private void hideSystemUi() {
-//        playerView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE
-//                | View.SYSTEM_UI_FLAG_FULLSCREEN
-//                | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-//                | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-//                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-//                | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
-//    }
+    @SuppressLint("InlinedApi")
+    private void hideSystemUi() {
+        playerView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE
+                | View.SYSTEM_UI_FLAG_FULLSCREEN
+                | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
+    }
 
     private void updateStartPosition() {
 
@@ -197,28 +212,6 @@ public class PlayMusicActivity extends AppCompatActivity {
     }
 
 
-    private void updateButtonVisibilities() {
-        if (player == null) {
-            return;
-        }
-
-        MappingTrackSelector.MappedTrackInfo mappedTrackInfo = trackSelector.getCurrentMappedTrackInfo();
-        if(mappedTrackInfo ==null) return;
-
-//        for (int i = 0; i <= mappedTrackInfo.getRendererCount(); i++) {
-//            TrackGroupArray trackGroups = mappedTrackInfo.getTrackGroups(i);
-//            if (trackGroups.length != 0) {
-//                if (player.getRendererType(i) == C.TRACK_TYPE_VIDEO) {
-//                    ivSettings.visibility = View.VISIBLE;
-//                    ivSettings.setOnClickListener(this);
-//                    ivSettings.tag = i
-//                }
-//            }
-//        }
-    }
-
-
-
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -227,6 +220,8 @@ public class PlayMusicActivity extends AppCompatActivity {
         outState.putInt(KEY_WINDOW, currentWindow);
         outState.putLong(KEY_POSITION, playbackPosition);
     }
+
+
 
     class PlayerEventListener extends Player.DefaultEventListener  {
         @Override
@@ -253,27 +248,27 @@ public class PlayMusicActivity extends AppCompatActivity {
     class ExoPlayerListerner extends ExoPlayer.DefaultEventListener {
         @Override
         public void onTimelineChanged(Timeline timeline, Object manifest, int reason) {
-            Log.d("minhnq","onTimelineChanged");
+            Log.d("minhnq", "onTimelineChanged");
         }
 
         @Override
         public void onTracksChanged(TrackGroupArray trackGroups, TrackSelectionArray trackSelections) {
-            Log.d("minhnq","onTracksChanged");
+            Log.d("minhnq", "onTracksChanged");
         }
 
         @Override
         public void onLoadingChanged(boolean isLoading) {
-            if(isLoading){
+            if (isLoading) {
                 mProgressBar.setVisibility(View.VISIBLE);
-            }else {
+            } else {
                 mProgressBar.setVisibility(View.GONE);
             }
-            Log.d("minhnq","onLoadingChanged");
+            Log.d("minhnq", "onLoadingChanged");
         }
 
         @Override
         public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
-            Log.d("minhnq","onPlayerStateChanged");
+            Log.d("minhnq", "onPlayerStateChanged");
             switch (playbackState) {
                 case Player.STATE_IDLE:
                     mProgressBar.setVisibility(View.VISIBLE);
@@ -286,33 +281,32 @@ public class PlayMusicActivity extends AppCompatActivity {
 
         @Override
         public void onRepeatModeChanged(int repeatMode) {
-            Log.d("minhnq","onRepeatModeChanged");
+            Log.d("minhnq", "onRepeatModeChanged");
         }
 
         @Override
         public void onShuffleModeEnabledChanged(boolean shuffleModeEnabled) {
-            Log.d("minhnq","onShuffleModeEnabledChanged");
+            Log.d("minhnq", "onShuffleModeEnabledChanged");
         }
 
         @Override
         public void onPlayerError(ExoPlaybackException error) {
-            Log.d("minhnq","onPlayerError");
+            Log.d("minhnq", "onPlayerError");
         }
 
         @Override
         public void onPositionDiscontinuity(int reason) {
-            Log.d("minhnq","onPositionDiscontinuity + " +reason);
+            Log.d("minhnq", "onPositionDiscontinuity + " + reason);
         }
 
         @Override
         public void onPlaybackParametersChanged(PlaybackParameters playbackParameters) {
-            Log.d("minhnq","onPlaybackParametersChanged");
+            Log.d("minhnq", "onPlaybackParametersChanged");
         }
 
         @Override
         public void onSeekProcessed() {
-            Log.d("minhnq","onSeekProcessed");
+            Log.d("minhnq", "onSeekProcessed");
         }
-
     }
-}
+    }

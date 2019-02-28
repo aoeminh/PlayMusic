@@ -86,6 +86,12 @@ public class SongListActivity extends AppCompatActivity implements ISongListView
         collapsingToolbarLayout.setExpandedTitleTextAppearance(R.style.ExpandedAppBar);
         presenter = new SongListPresenter(this);
 
+        btnPlay.setOnClickListener(view -> {
+            Intent intent = new Intent(this,PlayMusicActivity.class);
+            intent.putParcelableArrayListExtra("song",songList);
+            startActivity(intent);
+        });
+
     }
 
     private void setViewCollaplayout(String name, String image) {
