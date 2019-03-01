@@ -1,6 +1,8 @@
 package com.example.apple.playmusic.fragment;
 
 import android.annotation.SuppressLint;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -10,9 +12,13 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.example.apple.playmusic.R;
+import com.example.apple.playmusic.Ultils.GetImageFromUrl;
 import com.example.apple.playmusic.activity.PlayMusicActivity;
 import com.example.apple.playmusic.model.Song;
 import com.google.android.exoplayer2.C;
@@ -40,8 +46,9 @@ import com.google.android.exoplayer2.util.Util;
 
 import java.util.Arrays;
 
-public class PlayMusicFragment extends Fragment {
+public class PlayMusicFragment extends Fragment implements GetImageFromUrl.IOnGetBitmap {
 
+    public static final String TAG= "PlayMusicFragment";
     PlayerView playerView;
     private static final String KEY_PLAY_WHEN_READY = "play_when_ready";
     private static final String KEY_WINDOW = "window";
@@ -58,9 +65,13 @@ public class PlayMusicFragment extends Fragment {
     private BandwidthMeter bandwidthMeter =  new DefaultBandwidthMeter();
 
     private ProgressBar mProgressBar;
+    private TextView tvSongName,tvSinger;
     private Song song;
 
+    private RelativeLayout mFrameLayout;
+
     public static PlayMusicFragment newInstance(Song song){
+        Log.d(TAG,"newInstance");
         PlayMusicFragment fragment = new PlayMusicFragment();
         Bundle bundle = new Bundle();
         bundle.putParcelable("song",song);
@@ -72,31 +83,39 @@ public class PlayMusicFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if(getArguments() !=null){
             song = getArguments().getParcelable("song");
-
         }
-
+        Log.d(TAG,"onCreate");
     }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-
-        View view= inflater.inflate(R.layout.fragment_play_music,container,false);
-        playerView = view.findViewById(R.id.video_view);
-        mProgressBar = view.findViewById(R.id.progress_bar);
+        Log.d(TAG,"onCreateView");
         if (savedInstanceState != null) {
-
             playWhenReady = savedInstanceState.getBoolean(KEY_PLAY_WHEN_READY);
             currentWindow = savedInstanceState.getInt(KEY_WINDOW);
             playbackPosition = savedInstanceState.getLong(KEY_POSITION);
-
         }
-
+        View view= inflater.inflate(R.layout.fragment_play_music,container,false);
+        initView(view);
+        GetImageFromUrl getImageFromUrl = new GetImageFromUrl(this);
+        getImageFromUrl.execute(song.getSongImage());
         shouldAutoPlay = true;
         mediaDataSourceFactory = new DefaultDataSourceFactory(getActivity(), Util.getUserAgent(getActivity(), "mediaPlayerSample"),
                 (TransferListener<? super DataSource>) bandwidthMeter);
         initializePlayer(song.getSonglink());
+
         return view;
+    }
+
+    private  void initView(View view){
+        playerView = view.findViewById(R.id.video_view);
+        tvSongName = view.findViewById(R.id.tv_songname_playmusic);
+        tvSinger = view.findViewById(R.id.tv_singer_playmusic);
+        mFrameLayout = view.findViewById(R.id.fl_play_music_fragment);
+
+        tvSinger.setText(song.getSinger());
+        tvSongName.setText(song.getSongName());
     }
 
     private void initializePlayer(String url) {
@@ -118,13 +137,6 @@ public class PlayMusicFragment extends Fragment {
         }
         MediaSource mediaSource =  new ExtractorMediaSource.Factory(mediaDataSourceFactory)
                 .createMediaSource(Uri.parse(url));
-        ConcatenatingMediaSource concatenatingMediaSource = new ConcatenatingMediaSource();
-//        MediaSource[] mediaSources = new MediaSource[uris.length];
-//        for (int i = 0; i< mediaSources.length ; i++){
-//            mediaSources[i] = new ExtractorMediaSource.Factory(mediaDataSourceFactory).createMediaSource(uris[i]);
-//        }
-//
-//        concatenatingMediaSource.addMediaSources(0, Arrays.asList(mediaSources));
         boolean haveStartPosition = currentWindow != C.INDEX_UNSET;
         if (haveStartPosition) {
             player.seekTo(currentWindow, playbackPosition);
@@ -132,7 +144,7 @@ public class PlayMusicFragment extends Fragment {
 
         player.prepare(mediaSource, !haveStartPosition, false);
         player.setPlayWhenReady(true);
-        player.setRepeatMode(Player.REPEAT_MODE_ALL);
+//        player.setRepeatMode(Player.REPEAT_MODE_ALL);
 
     }
 
@@ -153,25 +165,30 @@ public class PlayMusicFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        if (Util.SDK_INT > 23) {
+
             initializePlayer(song.getSonglink());
-        }
+
+        Log.d(TAG,"onStart");
     }
 
     @Override
     public void onResume() {
         super.onResume();
+        Log.d(TAG,"onResume");
         hideSystemUi();
-        if ((Util.SDK_INT <= 23 || player == null)) {
-            initializePlayer(song.getSonglink());
+        if (player == null) {
+//            initializePlayer(song.getSonglink());
+            player.setPlayWhenReady(true);
         }
     }
     @Override
     public void onPause() {
+        Log.d(TAG,"onPause");
         super.onPause();
-        if (Util.SDK_INT <= 23) {
-            releasePlayer();
-        }
+
+//            releasePlayer();
+            player.setPlayWhenReady(false);
+
     }
 
     private void releasePlayer() {
@@ -188,10 +205,23 @@ public class PlayMusicFragment extends Fragment {
     @Override
     public void onStop() {
         super.onStop();
-        if (Util.SDK_INT > 23) {
-            releasePlayer();
-        }
+            player.setPlayWhenReady(false);
+            Log.d(TAG,"onStop");
     }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Log.d(TAG,"onDestroy");
+        releasePlayer();
+    }
+
+    @Override
+    public void onDestroyView() {
+        Log.d(TAG,"onDestroyView");
+        super.onDestroyView();
+    }
+
     @SuppressLint("InlinedApi")
     private void hideSystemUi() {
         playerView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE
@@ -216,31 +246,38 @@ public class PlayMusicFragment extends Fragment {
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         updateStartPosition();
-        outState    .putBoolean(KEY_PLAY_WHEN_READY, playWhenReady);
+        outState.putBoolean(KEY_PLAY_WHEN_READY, playWhenReady);
         outState.putInt(KEY_WINDOW, currentWindow);
         outState.putLong(KEY_POSITION, playbackPosition);
     }
 
+    @Override
+    public void getBitmap(Bitmap bitmap) {
+        if(getActivity().getResources() !=null){
+            BitmapDrawable bitmapDrawable = new BitmapDrawable(getActivity().getResources(),bitmap);
+            mFrameLayout.setBackground(bitmapDrawable);
+        }
+    }
 
 
     class PlayerEventListener extends Player.DefaultEventListener  {
         @Override
         public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
-            switch (playbackState){
-                case Player.STATE_IDLE:
-                    mProgressBar.setVisibility(View.GONE);
-                    break;
-                case Player.STATE_BUFFERING:
-                    mProgressBar.setVisibility(View.VISIBLE);
-                    break;
-                case Player.STATE_READY:
-                    mProgressBar.setVisibility(View.GONE);
-                    break;
-                case Player.STATE_ENDED:
-                    mProgressBar.setVisibility(View.GONE);
-                    break;
-
-            }
+//            switch (playbackState){
+//                case Player.STATE_IDLE:
+//                    mProgressBar.setVisibility(View.GONE);
+//                    break;
+//                case Player.STATE_BUFFERING:
+//                    mProgressBar.setVisibility(View.VISIBLE);
+//                    break;
+//                case Player.STATE_READY:
+//                    mProgressBar.setVisibility(View.GONE);
+//                    break;
+//                case Player.STATE_ENDED:
+//                    mProgressBar.setVisibility(View.GONE);
+//                    break;
+//
+//            }
         }
 
     }
@@ -258,25 +295,12 @@ public class PlayMusicFragment extends Fragment {
 
         @Override
         public void onLoadingChanged(boolean isLoading) {
-            if (isLoading) {
-                mProgressBar.setVisibility(View.VISIBLE);
-            } else {
-                mProgressBar.setVisibility(View.GONE);
-            }
             Log.d("minhnq", "onLoadingChanged");
         }
 
         @Override
         public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
             Log.d("minhnq", "onPlayerStateChanged");
-            switch (playbackState) {
-                case Player.STATE_IDLE:
-                    mProgressBar.setVisibility(View.VISIBLE);
-                    break;
-                case Player.STATE_READY:
-                    mProgressBar.setVisibility(View.GONE);
-                    break;
-            }
         }
 
         @Override
@@ -309,4 +333,4 @@ public class PlayMusicFragment extends Fragment {
             Log.d("minhnq", "onSeekProcessed");
         }
     }
-    }
+}

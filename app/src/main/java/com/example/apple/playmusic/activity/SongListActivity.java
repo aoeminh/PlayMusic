@@ -22,6 +22,7 @@ import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.example.apple.playmusic.R;
+import com.example.apple.playmusic.Ultils.GetImageFromUrl;
 import com.example.apple.playmusic.action.IOnItemClick;
 import com.example.apple.playmusic.adapter.SongListAdapter;
 import com.example.apple.playmusic.contract.ISongListPresenter;
@@ -45,7 +46,7 @@ import java.util.ArrayList;
 
 import retrofit2.http.Url;
 
-public class SongListActivity extends AppCompatActivity implements ISongListViewCallback, IOnItemClick {
+public class SongListActivity extends AppCompatActivity implements ISongListViewCallback, IOnItemClick, GetImageFromUrl.IOnGetBitmap {
 
     private RecyclerView rvSonglist;
     private Toolbar toolbar;
@@ -96,8 +97,9 @@ public class SongListActivity extends AppCompatActivity implements ISongListView
 
     private void setViewCollaplayout(String name, String image) {
         collapsingToolbarLayout.setTitle(name);
-        GetImageFromUrlAsync getImageFromUrlAsync = new GetImageFromUrlAsync();
-        getImageFromUrlAsync.execute(image);
+//        GetImageFromUrlAsync getImageFromUrlAsync = new GetImageFromUrlAsync();
+        GetImageFromUrl getImageFromUrl = new GetImageFromUrl(this);
+        getImageFromUrl.execute(image);
         Glide.with(this).load(image).into(songAvatar);
     }
 
@@ -169,30 +171,36 @@ public class SongListActivity extends AppCompatActivity implements ISongListView
 
     }
 
-    class GetImageFromUrlAsync extends AsyncTask<String, Void, Bitmap> {
-
-        @Override
-        protected Bitmap doInBackground(String... strings) {
-            String strUrl = strings[0];
-            Bitmap bitmap = null;
-            try {
-                URL url = new URL(strUrl);
-                bitmap = BitmapFactory.decodeStream(url.openConnection().getInputStream());
-                return bitmap;
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return bitmap;
-        }
-
-        @Override
-        protected void onPostExecute(Bitmap bitmap) {
-            super.onPostExecute(bitmap);
-            BitmapDrawable bitmapDrawable = new BitmapDrawable(getResources(), bitmap);
-            collapsingToolbarLayout.setBackground(bitmapDrawable);
-        }
-
+    @Override
+    public void getBitmap(Bitmap bitmap) {
+        BitmapDrawable bitmapDrawable = new BitmapDrawable(getResources(), bitmap);
+        collapsingToolbarLayout.setBackground(bitmapDrawable);
     }
+
+//    class GetImageFromUrlAsync extends AsyncTask<String, Void, Bitmap> {
+//
+//        @Override
+//        protected Bitmap doInBackground(String... strings) {
+//            String strUrl = strings[0];
+//            Bitmap bitmap = null;
+//            try {
+//                URL url = new URL(strUrl);
+//                bitmap = BitmapFactory.decodeStream(url.openConnection().getInputStream());
+//                return bitmap;
+//            } catch (MalformedURLException e) {
+//                e.printStackTrace();
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//            return bitmap;
+//        }
+//
+//        @Override
+//        protected void onPostExecute(Bitmap bitmap) {
+//            super.onPostExecute(bitmap);
+//            BitmapDrawable bitmapDrawable = new BitmapDrawable(getResources(), bitmap);
+//            collapsingToolbarLayout.setBackground(bitmapDrawable);
+//        }
+//    }
+
 }
