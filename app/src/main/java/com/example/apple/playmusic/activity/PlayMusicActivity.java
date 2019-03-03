@@ -6,11 +6,13 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ProgressBar;
 
 import com.example.apple.playmusic.R;
 import com.example.apple.playmusic.adapter.PlayMusicAdapter;
+import com.example.apple.playmusic.fragment.PlayMusicFragment;
 import com.example.apple.playmusic.model.Song;
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.ExoPlaybackException;
@@ -40,7 +42,7 @@ import com.google.android.exoplayer2.util.Util;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class PlayMusicActivity extends AppCompatActivity {
+public class PlayMusicActivity extends AppCompatActivity{
     PlayerView playerView;
     private static final String KEY_PLAY_WHEN_READY = "play_when_ready";
     private static final String KEY_WINDOW = "window";
@@ -60,19 +62,43 @@ public class PlayMusicActivity extends AppCompatActivity {
     private ViewPager viewPager;
     private PlayMusicAdapter adapter;
     private ArrayList<Song> songs;
+
+    private int previous=0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_play_music);
         if(getIntent() !=null){
             songs = getIntent().getParcelableArrayListExtra("song");
-            if(songs.size()>0){
-                Log.d("minh", "" + songs.size());
                 adapter = new PlayMusicAdapter(getSupportFragmentManager(),songs);
-            }
+
         }
         viewPager =findViewById(R.id.view_pager_play_activity);
         viewPager.setAdapter(adapter);
 
+        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int i, float v, int i1) {
+
+
+                previous =i;
+            }
+
+            @Override
+            public void onPageSelected(int i) {
+
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int i) {
+
+            }
+        });
+
     }
+
+    public  ViewPager getViewPager(){
+        return this.viewPager;
+    }
+
 }

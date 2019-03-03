@@ -27,13 +27,15 @@
         android:gravity="center"
         android:paddingTop="4dp"
         android:orientation="horizontal">
-        <ImageButton android:id="@id/exo_shuffle"
-            style="@style/ExoMediaButton.Shuffle"/>
-        <ImageButton android:id="@id/exo_prev"
-            style="@style/ExoMediaButton.Previous"/>
+        <!--<ImageButton android:id="@id/exo_shuffle"-->
+            <!--style="@style/ExoMediaButton.Shuffle"/>-->
+        <!--<ImageButton android:id="@id/exo_prev"-->
+            <!--style="@style/ExoMediaButton.Previous"/>-->
 
-        <ImageButton android:id="@id/exo_rew"
-            style="@style/ExoMediaButton.Rewind"/>
+        <ImageButton
+            android:id="@id/exo_rew"
+            style="@style/ExoMediaButton.Rewind"
+            android:layout_width="69dp" />
         <ImageButton android:id="@id/exo_play"
             style="@style/ExoMediaButton.Play"/>
 

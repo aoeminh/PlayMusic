@@ -9,7 +9,7 @@ import com.example.apple.playmusic.model.Song;
 
 import java.util.ArrayList;
 
-public class PlayMusicAdapter extends FragmentStatePagerAdapter {
+public class PlayMusicAdapter extends FragmentStatePagerAdapter  {
     ArrayList<Song> songs ;
     public PlayMusicAdapter(FragmentManager fm, ArrayList<Song> songs ) {
         super(fm);
@@ -19,11 +19,12 @@ public class PlayMusicAdapter extends FragmentStatePagerAdapter {
     @Override
     public Fragment getItem(int i) {
 
-        return PlayMusicFragment.newInstance(songs.get(i));
+        return PlayMusicFragment.newInstance(songs.get(i),i);
     }
 
     @Override
     public int getCount() {
         return songs.size();
     }
+
 }
