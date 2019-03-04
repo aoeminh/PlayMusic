@@ -88,11 +88,12 @@ public class SongListActivity extends AppCompatActivity implements ISongListView
         presenter = new SongListPresenter(this);
 
         btnPlay.setOnClickListener(view -> {
-            Intent intent = new Intent(this,PlayMusicActivity.class);
-            intent.putParcelableArrayListExtra("song",songList);
-            startActivity(intent);
+            if(songList !=null && songList.size() >0){
+                Intent intent = new Intent(this,PlayMusicActivity.class);
+                intent.putParcelableArrayListExtra("song",songList);
+                startActivity(intent);
+            }
         });
-
     }
 
     private void setViewCollaplayout(String name, String image) {

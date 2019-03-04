@@ -62,7 +62,7 @@ public class PlayMusicActivity extends AppCompatActivity{
     private ViewPager viewPager;
     private PlayMusicAdapter adapter;
     private ArrayList<Song> songs;
-
+    private int curentPostion =0;
     private int previous=0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,13 +80,11 @@ public class PlayMusicActivity extends AppCompatActivity{
             @Override
             public void onPageScrolled(int i, float v, int i1) {
 
-
-                previous =i;
             }
 
             @Override
             public void onPageSelected(int i) {
-
+                curentPostion = i;
             }
 
             @Override
@@ -99,6 +97,10 @@ public class PlayMusicActivity extends AppCompatActivity{
 
     public  ViewPager getViewPager(){
         return this.viewPager;
+    }
+
+    public int getCurrentPosition() {
+        return curentPostion;
     }
 
 }

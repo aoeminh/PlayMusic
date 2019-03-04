@@ -16,7 +16,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.example.apple.playmusic.R;
@@ -47,7 +46,8 @@ import com.google.android.exoplayer2.upstream.TransferListener;
 import com.google.android.exoplayer2.util.Util;
 
 import java.util.Arrays;
-import java.util.Objects;
+
+
 
 public class PlayMusicFragment extends Fragment implements GetImageFromUrl.IOnGetBitmap {
 
@@ -73,8 +73,7 @@ public class PlayMusicFragment extends Fragment implements GetImageFromUrl.IOnGe
     private int position;
     private FrameLayout mFrameLayout;
     private ViewPager viewPager;
-
-
+    int current =0;
     public static PlayMusicFragment newInstance(Song song, int position) {
         PlayMusicFragment fragment = new PlayMusicFragment();
         Bundle bundle = new Bundle();
@@ -113,16 +112,18 @@ public class PlayMusicFragment extends Fragment implements GetImageFromUrl.IOnGe
         initView(view);
 
         shouldAutoPlay = true;
-        PlayMusicActivity playMusicActivity= new PlayMusicActivity();
-        viewPager = playMusicActivity.getViewPager();
         if (playerView.getPlayer() ==null){
             initializePlayer(song.getSonglink());
             Log.d(TAG," init in onCreateView " + position);
         }
 
-        Log.d(TAG,"currnet " + currentWindow);
+        if (getActivity() instanceof PlayMusicActivity) {
+            current = ((PlayMusicActivity)getActivity()).getCurrentPosition();
+        }
+        Log.d(TAG," init in onCreateView  " + current);
         //init
-        if(position ==0 ){
+        if(position ==0 && current ==0){
+            Log.d(TAG," init in onCreateView player.setPlayWhenReady(true); " + current);
             player.setPlayWhenReady(true);
         }else {
             player.setPlayWhenReady(false);
