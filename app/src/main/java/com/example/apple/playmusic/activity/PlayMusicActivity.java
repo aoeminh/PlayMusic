@@ -103,4 +103,12 @@ public class PlayMusicActivity extends AppCompatActivity{
         return curentPostion;
     }
 
+    public void setNextFragment(int curentPostion){
+        viewPager.setCurrentItem(curentPostion +1);
+    }
+
+    public int getSongSize(){
+        return songs.size();
+    }
+
 }

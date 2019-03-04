@@ -19,6 +19,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.apple.playmusic.R;
@@ -92,6 +93,8 @@ public class SongListActivity extends AppCompatActivity implements ISongListView
                 Intent intent = new Intent(this,PlayMusicActivity.class);
                 intent.putParcelableArrayListExtra("song",songList);
                 startActivity(intent);
+            }else {
+                Toast.makeText(this,"No song in playlist",Toast.LENGTH_SHORT).show();
             }
         });
     }

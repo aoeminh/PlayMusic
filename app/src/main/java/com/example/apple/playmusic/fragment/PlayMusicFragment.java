@@ -17,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.apple.playmusic.R;
 import com.example.apple.playmusic.Ultils.GetImageFromUrl;
@@ -111,24 +112,23 @@ public class PlayMusicFragment extends Fragment implements GetImageFromUrl.IOnGe
         View view = inflater.inflate(R.layout.fragment_play_music, container, false);
         initView(view);
 
-        shouldAutoPlay = true;
+        //init
         if (playerView.getPlayer() ==null){
             initializePlayer(song.getSonglink());
             Log.d(TAG," init in onCreateView " + position);
         }
 
+
         if (getActivity() instanceof PlayMusicActivity) {
             current = ((PlayMusicActivity)getActivity()).getCurrentPosition();
         }
-        Log.d(TAG," init in onCreateView  " + current);
-        //init
+
         if(position ==0 && current ==0){
             Log.d(TAG," init in onCreateView player.setPlayWhenReady(true); " + current);
             player.setPlayWhenReady(true);
         }else {
             player.setPlayWhenReady(false);
         }
-
 
         return view;
     }
@@ -160,7 +160,6 @@ public class PlayMusicFragment extends Fragment implements GetImageFromUrl.IOnGe
         if (player != null) {
             player.addListener(new PlayerEventListener());
             player.addListener(new ExoPlayerListerner());
-            playWhenReady = shouldAutoPlay;
         }
         MediaSource mediaSource = new ExtractorMediaSource.Factory(mediaDataSourceFactory)
                 .createMediaSource(Uri.parse(url));
@@ -171,7 +170,8 @@ public class PlayMusicFragment extends Fragment implements GetImageFromUrl.IOnGe
 
         player.prepare(mediaSource, !haveStartPosition, false);
         playerView.setPlayer(player);
-        playerView.showController();
+        playerView.setControllerHideOnTouch(false);
+        playerView.setControllerAutoShow(true);
 
         }
 
@@ -286,28 +286,29 @@ public class PlayMusicFragment extends Fragment implements GetImageFromUrl.IOnGe
 
     @Override
     public void getBitmap(Bitmap bitmap) {
-        playerView.setDefaultArtwork(bitmap);
+        if(playerView.getDefaultArtwork()== null){
+            playerView.setDefaultArtwork(bitmap);
+        }
+
     }
 
 
     class PlayerEventListener extends Player.DefaultEventListener {
         @Override
         public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
-//            switch (playbackState){
-//                case Player.STATE_IDLE:
-//                    mProgressBar.setVisibility(View.GONE);
-//                    break;
-//                case Player.STATE_BUFFERING:
-//                    mProgressBar.setVisibility(View.VISIBLE);
-//                    break;
-//                case Player.STATE_READY:
-//                    mProgressBar.setVisibility(View.GONE);
-//                    break;
-//                case Player.STATE_ENDED:
-//                    mProgressBar.setVisibility(View.GONE);
-//                    break;
-//
-//            }
+            switch (playbackState){
+                case Player.STATE_ENDED:
+                    if(getActivity() instanceof PlayMusicActivity){
+                        PlayMusicActivity playMusicActivity = (PlayMusicActivity)getActivity();
+                        current = playMusicActivity.getCurrentPosition();
+                        if(current < playMusicActivity.getSongSize()){
+                            playMusicActivity.setNextFragment(current);
+                        }
+                    }
+
+                    break;
+
+            }
         }
 
     }
@@ -375,9 +376,12 @@ public class PlayMusicFragment extends Fragment implements GetImageFromUrl.IOnGe
             releasePlayer();
         } else {
             if (song != null) {
-                initializePlayer(song.getSonglink());
+                if( playerView.getPlayer() ==null){
+                    initializePlayer(song.getSonglink());
+                    Log.d(TAG," init in setUserVisibleHint " + position);
+
+                }
                 player.setPlayWhenReady(true);
-                Log.d(TAG," init in setUserVisibleHint " + position);
             }
 
         }
