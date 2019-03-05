@@ -126,14 +126,14 @@ public class SongListActivity extends AppCompatActivity implements ISongListView
                 mPlaylist = (Playlist) intent.getSerializableExtra(DayPlaylistFragment.EXTRA_PLAYLIST);
                 presenter.songlistFromPlaylist(String.valueOf(mPlaylist.getPlaylistId()));
                 setViewCollaplayout(mPlaylist.getPlaylistName(), mPlaylist.getPlaylistImage());
-            }else if(intent.hasExtra(CategoryThemeFragment.EXTRA_THEME)){
+            } else if (intent.hasExtra(CategoryThemeFragment.EXTRA_THEME) ) {
                 theme = intent.getParcelableExtra(CategoryThemeFragment.EXTRA_THEME);
                 presenter.songlistFromTheme(String.valueOf(theme.getIdChude()));
-                setViewCollaplayout(theme.getTenChude(),theme.getHinhChude());
-            }else if(intent.hasExtra(CategoryThemeFragment.EXTRA_CATEGORY)){
+                setViewCollaplayout(theme.getTenChude(), theme.getHinhChude());
+            } else if (intent.hasExtra(CategoryThemeFragment.EXTRA_CATEGORY)) {
                 category = intent.getParcelableExtra(CategoryThemeFragment.EXTRA_CATEGORY);
                 presenter.songlistFromCategory(String.valueOf(category.getIdCategory()));
-                setViewCollaplayout(category.getCategoryName(),category.getCategoryImage());
+                setViewCollaplayout(category.getCategoryName(), category.getCategoryImage());
             }
         }
     }

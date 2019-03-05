@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import com.example.apple.playmusic.R;
 import com.example.apple.playmusic.action.IOnItemClick;
+import com.example.apple.playmusic.activity.ListThemeActivity;
 import com.example.apple.playmusic.activity.SongListActivity;
 import com.example.apple.playmusic.adapter.CategoryThemeAdapter;
 import com.example.apple.playmusic.contract.IPresenterCallback;
@@ -54,6 +55,11 @@ public class CategoryThemeFragment extends Fragment implements IViewCallback,IOn
         rvCategoryTheme = view.findViewById(R.id.rv_category_theme_day);
         tvViewMore = view.findViewById(R.id.tv_view_more_category_theme_fragment);
         presenter = new HomePresenter(this);
+
+        tvViewMore.setOnClickListener(view1 -> {
+            Intent intent = new Intent(getActivity(), ListThemeActivity.class);
+            startActivity(intent);
+        });
     }
 
     void getData(){

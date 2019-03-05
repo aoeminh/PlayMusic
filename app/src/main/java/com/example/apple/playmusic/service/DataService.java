@@ -51,4 +51,7 @@ public interface DataService {
 
     @GET("allPlaylist.php")
     Call<ArrayList<Playlist>> getAllPlaylist();
+
+    @GET("allTheme.php")
+    Call<ArrayList<Theme>> getAllTheme();
 }

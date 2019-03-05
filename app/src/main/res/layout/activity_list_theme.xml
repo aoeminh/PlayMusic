@@ -4,19 +4,19 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activity.ListPlaylistActivity">
+    tools:context=".activity.ListThemeActivity">
 
     <android.support.v7.widget.Toolbar
-        android:id="@+id/toolbar_list_playlist"
+        android:id="@+id/toolbar_list_theme"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/background_toolbar_color"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-        app:title="Playlist" />
+        app:title="Theme" />
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/rv_list_playlist"
+        android:id="@+id/rv_list_theme"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginEnd="@dimen/_8sdp"
@@ -24,6 +24,5 @@
         android:layout_marginTop="@dimen/_5sdp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar_list_playlist"/>
-
+        app:layout_constraintTop_toBottomOf="@+id/toolbar_list_theme"/>
 </android.support.constraint.ConstraintLayout>
