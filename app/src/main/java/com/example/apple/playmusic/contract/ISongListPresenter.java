@@ -5,4 +5,5 @@ public interface ISongListPresenter {
     void songlistFromPlaylist(String id);
     void songlistFromTheme(String id);
     void songlistFromCategory(String id);
+    void songListFromAlbum(String id);
 }

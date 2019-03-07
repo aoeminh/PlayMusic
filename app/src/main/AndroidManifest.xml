@@ -33,6 +33,7 @@
         <activity android:name=".activity.SongListActivity" />
         <activity android:name=".activity.ListPlaylistActivity" />
         <activity android:name=".activity.ListThemeActivity" />
+        <activity android:name=".activity.ListAlbumActivity"></activity>
     </application>
 
 </manifest>

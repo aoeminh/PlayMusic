@@ -49,9 +49,16 @@ public interface DataService {
     @POST("songlist.php")
     Call<ArrayList<Song>> getSongFromCategory(@Field("themeId") String themeId);
 
+    @FormUrlEncoded
+    @POST("songlist.php")
+    Call<ArrayList<Song>> getSongFromAlbum(@Field("albumId") String albumId);
+
     @GET("allPlaylist.php")
     Call<ArrayList<Playlist>> getAllPlaylist();
 
     @GET("allTheme.php")
     Call<ArrayList<Theme>> getAllTheme();
+
+    @GET("getAllAlbum.php")
+    Call<ArrayList<Album>> getAllAlbum();
 }

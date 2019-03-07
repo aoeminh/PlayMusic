@@ -91,4 +91,22 @@ public class SongListPresenter implements ISongListPresenter{
             }
         });
     }
+
+    @Override
+    public void songListFromAlbum(String id) {
+        APIService.getRetrofitClient().getSongFromAlbum(id).enqueue(new Callback<ArrayList<Song>>() {
+            @Override
+            public void onResponse(Call<ArrayList<Song>> call, Response<ArrayList<Song>> response) {
+                if(response.isSuccessful()){
+                    view.songlistFromCategoryResponse(response.body());
+                    Log.d(TAG, "success get list song from category size: " +response.body().size());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ArrayList<Song>> call, Throwable t) {
+                Log.d(TAG, "error get list song from category : " + t.getMessage());
+            }
+        });
+    }
 }

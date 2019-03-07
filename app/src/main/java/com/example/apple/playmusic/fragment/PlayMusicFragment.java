@@ -16,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -72,7 +73,7 @@ public class PlayMusicFragment extends Fragment implements GetImageFromUrl.IOnGe
     private TextView tvSongName, tvSinger;
     private Song song;
     private int position;
-    private FrameLayout mFrameLayout;
+    private RelativeLayout mFrameLayout;
     private ViewPager viewPager;
     int current =0;
     public static PlayMusicFragment newInstance(Song song, int position) {
@@ -171,7 +172,6 @@ public class PlayMusicFragment extends Fragment implements GetImageFromUrl.IOnGe
         player.prepare(mediaSource, !haveStartPosition, false);
         playerView.setPlayer(player);
         playerView.setControllerHideOnTouch(false);
-        playerView.setControllerAutoShow(true);
 
         }
 

@@ -1,5 +1,6 @@
 package com.example.apple.playmusic.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -13,6 +14,10 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.apple.playmusic.R;
+import com.example.apple.playmusic.action.IOnItemClick;
+import com.example.apple.playmusic.activity.ListAlbumActivity;
+import com.example.apple.playmusic.activity.ListThemeActivity;
+import com.example.apple.playmusic.activity.SongListActivity;
 import com.example.apple.playmusic.adapter.AlbumHotAdapter;
 import com.example.apple.playmusic.contract.IPresenterCallback;
 import com.example.apple.playmusic.contract.IViewCallback;
@@ -25,7 +30,7 @@ import com.example.apple.playmusic.presenter.HomePresenter;
 
 import java.util.ArrayList;
 
-public class AlbumFragment extends Fragment implements IViewCallback {
+public class AlbumFragment extends Fragment implements IViewCallback,IOnItemClick {
     private View view;
     private IPresenterCallback presenter;
     private RecyclerView rvAlbumHot;
@@ -46,6 +51,11 @@ public class AlbumFragment extends Fragment implements IViewCallback {
         rvAlbumHot = view.findViewById(R.id.rv_album_hot);
         tvViewMore = view.findViewById(R.id.tv_view_more_album_hot_fragment);
         presenter = new HomePresenter(this);
+
+        tvViewMore.setOnClickListener(view1 -> {
+            Intent intent= new Intent(getActivity(), ListAlbumActivity.class);
+            startActivity(intent);
+        });
 
     }
 
@@ -68,7 +78,7 @@ public class AlbumFragment extends Fragment implements IViewCallback {
     public void responseAlbumHot(ArrayList<Album> albums) {
 
         albumList = albums;
-        adapter = new AlbumHotAdapter(getActivity(),albumList);
+        adapter = new AlbumHotAdapter(getActivity(),albumList,this::onClickItem);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         layoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
         rvAlbumHot.setAdapter(adapter);
@@ -82,5 +92,14 @@ public class AlbumFragment extends Fragment implements IViewCallback {
 
     void getData(){
         presenter.requestAlbumHot();
+    }
+
+    @Override
+    public void onClickItem(int position) {
+
+        Album album =albumList.get(position);
+        Intent intent = new Intent(getActivity(),SongListActivity.class);
+        intent.putExtra(ListAlbumActivity.EXTRA_ALBUM,album);
+        startActivity(intent);
     }
 }

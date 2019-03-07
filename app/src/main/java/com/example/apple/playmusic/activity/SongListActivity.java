@@ -32,6 +32,7 @@ import com.example.apple.playmusic.fragment.CategoryThemeFragment;
 import com.example.apple.playmusic.fragment.DayPlaylistFragment;
 import com.example.apple.playmusic.fragment.Fragment_Banner;
 import com.example.apple.playmusic.model.Advertise;
+import com.example.apple.playmusic.model.Album;
 import com.example.apple.playmusic.model.Category;
 import com.example.apple.playmusic.model.Playlist;
 import com.example.apple.playmusic.model.Song;
@@ -63,7 +64,7 @@ public class SongListActivity extends AppCompatActivity implements ISongListView
     private SongListAdapter adapter;
     private Theme theme;
     private Category category;
-
+    private Album album;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -134,6 +135,10 @@ public class SongListActivity extends AppCompatActivity implements ISongListView
                 category = intent.getParcelableExtra(CategoryThemeFragment.EXTRA_CATEGORY);
                 presenter.songlistFromCategory(String.valueOf(category.getIdCategory()));
                 setViewCollaplayout(category.getCategoryName(), category.getCategoryImage());
+            }else if(intent.hasExtra(ListAlbumActivity.EXTRA_ALBUM)){
+                album = intent.getParcelableExtra(ListAlbumActivity.EXTRA_ALBUM);
+                presenter.songListFromAlbum(String.valueOf(album.getAlbumID()));
+                setViewCollaplayout(album.getAlbumName(),album.getAlbumImage());
             }
         }
     }
@@ -164,6 +169,11 @@ public class SongListActivity extends AppCompatActivity implements ISongListView
 
     @Override
     public void songlistFromCategoryResponse(ArrayList<Song> songs) {
+        setValueRecyclerView(songs);
+    }
+
+    @Override
+    public void songListFromAlbumResponse(ArrayList<Song> songs) {
         setValueRecyclerView(songs);
     }
 

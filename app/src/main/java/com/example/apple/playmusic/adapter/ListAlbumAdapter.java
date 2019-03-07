@@ -16,21 +16,23 @@ import com.example.apple.playmusic.model.Album;
 
 import java.util.ArrayList;
 
-public class AlbumHotAdapter extends RecyclerView.Adapter<AlbumHotAdapter.ViewHolder>  {
 
-private ArrayList<Album> albums = new ArrayList<>();
+
+public class ListAlbumAdapter extends RecyclerView.Adapter<ListAlbumAdapter.ViewHolder> {
+    private ArrayList<Album> albums = new ArrayList<>();
     private Context context;
     private IOnItemClick iOnItemClick;
-    public AlbumHotAdapter(Context context, ArrayList<Album> a , IOnItemClick i){
+    public ListAlbumAdapter(Context context, ArrayList<Album> a, IOnItemClick i){
         this.context = context;
         this.albums = a;
-        this.iOnItemClick =i;
+        this.iOnItemClick = i;
+
     }
     @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-        View view = LayoutInflater.from(context).inflate(R.layout.row_item_album_hot,viewGroup,false);
-        return new ViewHolder(view);
+    public ListAlbumAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
+        View view = LayoutInflater.from(context).inflate(R.layout.row_item_list_album_activity,viewGroup,false);
+        return new ListAlbumAdapter.ViewHolder(view);
     }
 
     @Override
@@ -51,9 +53,9 @@ private ArrayList<Album> albums = new ArrayList<>();
         private TextView tvTittle,tvSinger;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            imAlbum = itemView.findViewById(R.id.im_row_item_album_hot);
-            tvTittle = itemView.findViewById(R.id.tv_album_tittle_row_item);
-            tvSinger = itemView.findViewById(R.id.tv_album_singer_row_item);
+            imAlbum = itemView.findViewById(R.id.im_row_item_list_album);
+            tvTittle = itemView.findViewById(R.id.tv_tittle_row_item_list_album);
+            tvSinger = itemView.findViewById(R.id.tv_singer_row_item_list_album);
 
             itemView.setOnClickListener(view -> iOnItemClick.onClickItem(getAdapterPosition()));
         }
