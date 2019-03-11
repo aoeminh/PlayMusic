@@ -53,8 +53,8 @@
         app:layout_anchor="@id/appbar_songlist"
         app:layout_anchorGravity="bottom|right"
         android:layout_marginRight="@dimen/_50sdp"
-        android:src="@drawable/iconfloatingactionbutton"
-        android:backgroundTint="#7c04ec"
+        android:src="@drawable/icon_play"
+        android:backgroundTint="@color/background_toolbar_color"
         app:fabSize="mini"
         android:scaleType="fitXY"/>
     <android.support.v4.widget.NestedScrollView

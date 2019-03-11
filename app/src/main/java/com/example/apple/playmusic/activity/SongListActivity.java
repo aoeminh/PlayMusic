@@ -1,6 +1,7 @@
 package com.example.apple.playmusic.activity;
 
 import android.annotation.SuppressLint;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -13,6 +14,7 @@ import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -48,7 +50,8 @@ import java.util.ArrayList;
 
 import retrofit2.http.Url;
 
-public class SongListActivity extends AppCompatActivity implements ISongListViewCallback, IOnItemClick, GetImageFromUrl.IOnGetBitmap {
+public class SongListActivity extends AppCompatActivity implements ISongListViewCallback, IOnItemClick,
+        GetImageFromUrl.IOnGetBitmap, SongListAdapter.OnOptionClick {
 
     private RecyclerView rvSonglist;
     private Toolbar toolbar;
@@ -98,6 +101,8 @@ public class SongListActivity extends AppCompatActivity implements ISongListView
                 Toast.makeText(this,"No song in playlist",Toast.LENGTH_SHORT).show();
             }
         });
+
+
     }
 
     private void setViewCollaplayout(String name, String image) {
@@ -145,7 +150,7 @@ public class SongListActivity extends AppCompatActivity implements ISongListView
 
     void setValueRecyclerView(ArrayList<Song> songListrv){
         songList = songListrv;
-        adapter = new SongListAdapter(this, songList, this);
+        adapter = new SongListAdapter(this, songList, this,this);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         rvSonglist.setAdapter(adapter);
@@ -191,30 +196,36 @@ public class SongListActivity extends AppCompatActivity implements ISongListView
         collapsingToolbarLayout.setBackground(bitmapDrawable);
     }
 
-//    class GetImageFromUrlAsync extends AsyncTask<String, Void, Bitmap> {
-//
-//        @Override
-//        protected Bitmap doInBackground(String... strings) {
-//            String strUrl = strings[0];
-//            Bitmap bitmap = null;
-//            try {
-//                URL url = new URL(strUrl);
-//                bitmap = BitmapFactory.decodeStream(url.openConnection().getInputStream());
-//                return bitmap;
-//            } catch (MalformedURLException e) {
-//                e.printStackTrace();
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//            return bitmap;
-//        }
-//
-//        @Override
-//        protected void onPostExecute(Bitmap bitmap) {
-//            super.onPostExecute(bitmap);
-//            BitmapDrawable bitmapDrawable = new BitmapDrawable(getResources(), bitmap);
-//            collapsingToolbarLayout.setBackground(bitmapDrawable);
-//        }
-//    }
+    @Override
+    public void onOptionClick(int position) {
+        showOptionDialog(position);
+    }
 
+    public void showOptionDialog(int position){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+// add a list
+        String[] animals = {"Play", "Remove song"};
+        builder.setItems(animals, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                switch (which) {
+                    case 0:
+
+                        ArrayList<Song> songs = new ArrayList<>();
+                        songs.add(songList.get(position));
+                        Intent intent = new Intent(SongListActivity.this,PlayMusicActivity.class);
+                        intent.putParcelableArrayListExtra("song",songs);
+                        startActivity(intent);
+                    case 1:
+                        songList.remove(position);
+                        adapter.notifyDataSetChanged();
+
+                }
+            }
+        });
+
+// create and show the alert dialog
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
 }

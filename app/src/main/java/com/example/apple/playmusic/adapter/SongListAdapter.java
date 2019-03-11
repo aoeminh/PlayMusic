@@ -1,7 +1,9 @@
 package com.example.apple.playmusic.adapter;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.support.annotation.NonNull;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,10 +22,12 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.ViewHo
     private ArrayList<Song> songs = new ArrayList<>();
     private Context context;
     private IOnItemClick iOnItemClick;
-    public SongListAdapter(Context context,ArrayList<Song>songs,IOnItemClick itemClick){
+    private OnOptionClick onOptionClick;
+    public SongListAdapter(Context context,ArrayList<Song>songs,IOnItemClick itemClick,OnOptionClick onOptionClick){
         this.iOnItemClick = itemClick;
         this.context = context;
         this.songs = songs;
+        this.onOptionClick = onOptionClick;
     }
     @NonNull
     @Override
@@ -47,10 +51,10 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.ViewHo
         return songs.size();
     }
 
-    class ViewHolder extends RecyclerView.ViewHolder{
+    public class ViewHolder extends RecyclerView.ViewHolder{
 
-        private TextView tvSongname,tvSinger,tvNumber;
-        private ImageView imLike;
+        public TextView tvSongname,tvSinger,tvNumber;
+        public ImageView imLike,imOption;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
@@ -58,9 +62,22 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.ViewHo
             tvNumber = itemView.findViewById(R.id.tv_number_item_song_list);
             tvSinger = itemView.findViewById(R.id.tv_singer_item_songlist);
             imLike = itemView.findViewById(R.id.im_like_item_list__song);
+            imOption = itemView.findViewById(R.id.im_option_item_list__song);
             itemView.setOnClickListener(view1 -> {
                 iOnItemClick.onClickItem(getAdapterPosition());
             });
+            imOption.setOnClickListener(view -> {
+                onOptionClick.onOptionClick(getAdapterPosition());
+            });
+
+
         }
+    }
+
+
+
+
+    public interface OnOptionClick{
+        void onOptionClick(int position);
     }
 }
