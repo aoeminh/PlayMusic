@@ -25,15 +25,6 @@
             android:textSize="@dimen/_20ssp"
             android:textStyle="bold" />
 
-        <TextView
-            android:id="@+id/tv_view_more_love_song_fragment"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="end"
-            android:paddingEnd="@dimen/_10sdp"
-            android:text="@string/view_more_category_theme_fragment"
-            android:textSize="@dimen/_17ssp" />
     </LinearLayout>
 
     <android.support.v7.widget.RecyclerView

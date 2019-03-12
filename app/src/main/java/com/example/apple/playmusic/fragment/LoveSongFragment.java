@@ -1,5 +1,6 @@
 package com.example.apple.playmusic.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -12,6 +13,9 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.apple.playmusic.R;
+import com.example.apple.playmusic.action.IOnItemClick;
+import com.example.apple.playmusic.activity.PlayMusicActivity;
+import com.example.apple.playmusic.activity.SongListActivity;
 import com.example.apple.playmusic.adapter.LoveSongAdapter;
 import com.example.apple.playmusic.contract.IPresenterCallback;
 import com.example.apple.playmusic.contract.IViewCallback;
@@ -24,7 +28,7 @@ import com.example.apple.playmusic.presenter.HomePresenter;
 
 import java.util.ArrayList;
 
-public class LoveSongFragment extends Fragment implements IViewCallback{
+public class LoveSongFragment extends Fragment implements IViewCallback,IOnItemClick{
 
     View view;
     private RecyclerView rvLoveSong;
@@ -68,7 +72,7 @@ public class LoveSongFragment extends Fragment implements IViewCallback{
     @Override
     public void responseLoveSong(ArrayList<Song> songs1) {
         songs=songs1;
-        adapter = new LoveSongAdapter(getActivity(),songs);
+        adapter = new LoveSongAdapter(getActivity(),songs,this::onClickItem);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         rvLoveSong.setLayoutManager(layoutManager);
@@ -79,5 +83,15 @@ public class LoveSongFragment extends Fragment implements IViewCallback{
     public void getData() {
 
         presenter.requestLoveSong();
+    }
+
+    @Override
+    public void onClickItem(int position) {
+
+        ArrayList<Song> lovesongs = new ArrayList<>();
+        lovesongs.add(songs.get(position));
+        Intent intent = new Intent(getActivity(),PlayMusicActivity.class);
+        intent.putParcelableArrayListExtra("song",lovesongs);
+        startActivity(intent);
     }
 }

@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.example.apple.playmusic.R;
+import com.example.apple.playmusic.action.IOnItemClick;
 import com.example.apple.playmusic.model.Song;
 
 import java.util.ArrayList;
@@ -20,10 +21,12 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class LoveSongAdapter  extends RecyclerView.Adapter<LoveSongAdapter.ViewHolder>{
 
     private Context context;
+    private IOnItemClick iOnItemClick;
     private ArrayList<Song>  songs = new ArrayList<>();
-    public  LoveSongAdapter(Context context,ArrayList<Song> songs){
+    public  LoveSongAdapter(Context context,ArrayList<Song> songs,IOnItemClick i){
         this.context = context;
         this.songs = songs;
+        this.iOnItemClick = i;
     }
     @NonNull
     @Override
@@ -57,6 +60,8 @@ public class LoveSongAdapter  extends RecyclerView.Adapter<LoveSongAdapter.ViewH
             tvSongName = itemView.findViewById(R.id.tv_name_love_song);
             songImage= itemView.findViewById(R.id.im_ava_love_song);
             imLike = itemView.findViewById(R.id.im_like_love_song_fragment);
+
+            itemView.setOnClickListener(view -> iOnItemClick.onClickItem(getAdapterPosition()));
         }
     }
 }
