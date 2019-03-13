@@ -1,7 +1,10 @@
 package com.example.apple.playmusic.fragment;
 
 import android.annotation.SuppressLint;
+import android.app.Notification;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
@@ -39,6 +42,7 @@ import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
+import com.google.android.exoplayer2.ui.PlayerNotificationManager;
 import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.BandwidthMeter;
 import com.google.android.exoplayer2.upstream.DataSource;
@@ -47,6 +51,7 @@ import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.upstream.TransferListener;
 import com.google.android.exoplayer2.util.Util;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 
@@ -76,6 +81,9 @@ public class PlayMusicFragment extends Fragment implements GetImageFromUrl.IOnGe
     private RelativeLayout mFrameLayout;
     private ViewPager viewPager;
     int current =0;
+    Bitmap bitmap1;
+
+    private PlayerNotificationManager playerNotificationManager;
     public static PlayMusicFragment newInstance(Song song, int position) {
         PlayMusicFragment fragment = new PlayMusicFragment();
         Bundle bundle = new Bundle();
@@ -98,6 +106,8 @@ public class PlayMusicFragment extends Fragment implements GetImageFromUrl.IOnGe
             song = getArguments().getParcelable("song");
             position = getArguments().getInt("position");
         }
+
+
         Log.d(TAG, "onCreate " + position);
     }
 
@@ -157,7 +167,53 @@ public class PlayMusicFragment extends Fragment implements GetImageFromUrl.IOnGe
         lastSeenTrackGroupArray = null;
 
         player = ExoPlayerFactory.newSimpleInstance(getActivity(), trackSelector);
+        playerNotificationManager = PlayerNotificationManager.createWithNotificationChannel(getActivity(), "1",
+                R.string.bottom_sheet_behavior, 1, new PlayerNotificationManager.MediaDescriptionAdapter() {
+                    @Override
+                    public String getCurrentContentTitle(Player player) {
+                        return song.getSongName();
+                    }
 
+                    @Nullable
+                    @Override
+                    public PendingIntent createCurrentContentIntent(Player player) {
+                        Intent intent = new Intent(getActivity(),PlayMusicActivity.class);
+                        Bundle bundle = new Bundle();
+                        ArrayList<Song> songs = new ArrayList<>();
+                        songs.add(song);
+                        bundle.putParcelableArrayList("song",songs);
+                        bundle.putInt("position",position);
+                        return PendingIntent.getActivity(getActivity(),0,intent,PendingIntent.FLAG_UPDATE_CURRENT);
+                    }
+
+                    @Nullable
+                    @Override
+                    public String getCurrentContentText(Player player) {
+                        return song.getSinger();
+                    }
+
+                    @Nullable
+                    @Override
+                    public Bitmap getCurrentLargeIcon(Player player, PlayerNotificationManager.BitmapCallback callback) {
+                        return bitmap1;
+                    }
+                });
+        playerNotificationManager.setPlayer(player);
+        playerNotificationManager.setVisibility(View.VISIBLE);
+        playerNotificationManager.setOngoing(false);
+        playerNotificationManager.setUseNavigationActions(true);
+        playerNotificationManager.setUsePlayPauseActions(true);
+        playerNotificationManager.setNotificationListener(new PlayerNotificationManager.NotificationListener() {
+            @Override
+            public void onNotificationStarted(int notificationId, Notification notification) {
+
+            }
+
+            @Override
+            public void onNotificationCancelled(int notificationId) {
+
+            }
+        });
         if (player != null) {
             player.addListener(new PlayerEventListener());
             player.addListener(new ExoPlayerListerner());
@@ -282,11 +338,11 @@ public class PlayMusicFragment extends Fragment implements GetImageFromUrl.IOnGe
         outState.putLong(KEY_POSITION, playbackPosition);
     }
 
-    BitmapDrawable bitmapDrawable = new BitmapDrawable();
 
     @Override
     public void getBitmap(Bitmap bitmap) {
         if(playerView.getDefaultArtwork()== null){
+            bitmap1= bitmap;
             playerView.setDefaultArtwork(bitmap);
         }
 

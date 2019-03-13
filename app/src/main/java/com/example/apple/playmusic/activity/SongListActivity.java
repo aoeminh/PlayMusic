@@ -10,6 +10,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.media.session.PlaybackState;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Parcelable;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.CoordinatorLayout;
@@ -95,7 +96,10 @@ public class SongListActivity extends AppCompatActivity implements ISongListView
         btnPlay.setOnClickListener(view -> {
             if(songList !=null && songList.size() >0){
                 Intent intent = new Intent(this,PlayMusicActivity.class);
-                intent.putParcelableArrayListExtra("song",songList);
+                Bundle bundle = new Bundle();
+                bundle.putParcelableArrayList("song", songList);
+                bundle.putInt("position",0);
+                intent.putExtras(bundle);
                 startActivity(intent);
             }else {
                 Toast.makeText(this,"No song in playlist",Toast.LENGTH_SHORT).show();
@@ -214,12 +218,16 @@ public class SongListActivity extends AppCompatActivity implements ISongListView
                         ArrayList<Song> songs = new ArrayList<>();
                         songs.add(songList.get(position));
                         Intent intent = new Intent(SongListActivity.this,PlayMusicActivity.class);
-                        intent.putParcelableArrayListExtra("song",songs);
+                        Bundle bundle = new Bundle();
+                        bundle.putParcelableArrayList("song",  songList);
+                        bundle.putInt("position",position);
+                        intent.putExtras(bundle);
                         startActivity(intent);
+                        break;
                     case 1:
                         songList.remove(position);
                         adapter.notifyDataSetChanged();
-
+                        break;
                 }
             }
         });

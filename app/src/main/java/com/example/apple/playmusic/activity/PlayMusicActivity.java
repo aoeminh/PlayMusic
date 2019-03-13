@@ -63,18 +63,22 @@ public class PlayMusicActivity extends AppCompatActivity{
     private PlayMusicAdapter adapter;
     private ArrayList<Song> songs;
     private int curentPostion =0;
-    private int previous=0;
+    private int firstPosition=0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_play_music);
-        if(getIntent() !=null){
-            songs = getIntent().getParcelableArrayListExtra("song");
-                adapter = new PlayMusicAdapter(getSupportFragmentManager(),songs);
+        Bundle  bundle = new Bundle();
+        if(getIntent().getExtras() !=null){
+            bundle = getIntent().getExtras();
+            songs = bundle.getParcelableArrayList("song");
+            firstPosition = bundle.getInt("position");
+            adapter = new PlayMusicAdapter(getSupportFragmentManager(),songs);
 
         }
         viewPager =findViewById(R.id.view_pager_play_activity);
         viewPager.setAdapter(adapter);
+        viewPager.setCurrentItem(firstPosition);
 
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
