@@ -15,6 +15,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
@@ -55,8 +56,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 
-
-public class PlayMusicFragment extends Fragment implements GetImageFromUrl.IOnGetBitmap {
+public class PlayMusicFragment extends Fragment implements GetImageFromUrl.IOnGetBitmap, View.OnTouchListener {
 
     public static final String TAG = "PlayMusicFragment";
     PlayerView playerView;
@@ -80,10 +80,11 @@ public class PlayMusicFragment extends Fragment implements GetImageFromUrl.IOnGe
     private int position;
     private RelativeLayout mFrameLayout;
     private ViewPager viewPager;
-    int current =0;
+    int current = 0;
     Bitmap bitmap1;
 
     private PlayerNotificationManager playerNotificationManager;
+
     public static PlayMusicFragment newInstance(Song song, int position) {
         PlayMusicFragment fragment = new PlayMusicFragment();
         Bundle bundle = new Bundle();
@@ -122,22 +123,22 @@ public class PlayMusicFragment extends Fragment implements GetImageFromUrl.IOnGe
         }
         View view = inflater.inflate(R.layout.fragment_play_music, container, false);
         initView(view);
-
+        playerView.setOnTouchListener(this);
         //init
-        if (playerView.getPlayer() ==null){
+        if (playerView.getPlayer() == null) {
             initializePlayer(song.getSonglink());
-            Log.d(TAG," init in onCreateView " + position);
+            Log.d(TAG, " init in onCreateView " + position);
         }
 
 
         if (getActivity() instanceof PlayMusicActivity) {
-            current = ((PlayMusicActivity)getActivity()).getCurrentPosition();
+            current = ((PlayMusicActivity) getActivity()).getCurrentPosition();
         }
 
-        if(position ==0 && current ==0){
-            Log.d(TAG," init in onCreateView player.setPlayWhenReady(true); " + current);
+        if (position == 0 && current == 0) {
+            Log.d(TAG, " init in onCreateView player.setPlayWhenReady(true); " + current);
             player.setPlayWhenReady(true);
-        }else {
+        } else {
             player.setPlayWhenReady(false);
         }
 
@@ -177,13 +178,13 @@ public class PlayMusicFragment extends Fragment implements GetImageFromUrl.IOnGe
                     @Nullable
                     @Override
                     public PendingIntent createCurrentContentIntent(Player player) {
-                        Intent intent = new Intent(getActivity(),PlayMusicActivity.class);
+                        Intent intent = new Intent(getActivity(), PlayMusicActivity.class);
                         Bundle bundle = new Bundle();
                         ArrayList<Song> songs = new ArrayList<>();
                         songs.add(song);
-                        bundle.putParcelableArrayList("song",songs);
-                        bundle.putInt("position",position);
-                        return PendingIntent.getActivity(getActivity(),0,intent,PendingIntent.FLAG_UPDATE_CURRENT);
+                        bundle.putParcelableArrayList("song", songs);
+                        bundle.putInt("position", position);
+                        return PendingIntent.getActivity(getActivity(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
                     }
 
                     @Nullable
@@ -229,7 +230,7 @@ public class PlayMusicFragment extends Fragment implements GetImageFromUrl.IOnGe
         playerView.setPlayer(player);
         playerView.setControllerHideOnTouch(false);
 
-        }
+    }
 
     public ConcatenatingMediaSource setDataForConcatenatingMediaSource() {
         Uri[] uris = new Uri[2];
@@ -260,7 +261,6 @@ public class PlayMusicFragment extends Fragment implements GetImageFromUrl.IOnGe
     public void onResume() {
         super.onResume();
         Log.d(TAG, "onResume " + position);
-        hideSystemUi();
 //        if (player == null && song != null) {
 //            initializePlayer(song.getSonglink());
 //        }
@@ -311,12 +311,22 @@ public class PlayMusicFragment extends Fragment implements GetImageFromUrl.IOnGe
 
     @SuppressLint("InlinedApi")
     private void hideSystemUi() {
-        playerView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE
+        mFrameLayout.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE
                 | View.SYSTEM_UI_FLAG_FULLSCREEN
                 | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                 | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
                 | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
                 | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
+    }
+
+    // Shows the system bars by removing all the flags
+// except for the ones that make the content appear under the system bars.
+
+    private void showSystemUI() {
+        mFrameLayout.setSystemUiVisibility(
+                View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
     }
 
     private void updateStartPosition() {
@@ -341,23 +351,83 @@ public class PlayMusicFragment extends Fragment implements GetImageFromUrl.IOnGe
 
     @Override
     public void getBitmap(Bitmap bitmap) {
-        if(playerView.getDefaultArtwork()== null){
-            bitmap1= bitmap;
+        if (playerView.getDefaultArtwork() == null) {
+            bitmap1 = bitmap;
             playerView.setDefaultArtwork(bitmap);
         }
 
     }
 
+    private static long mDeBounce = 0;
+    int downPosition = 0;
+    @Override
+    public boolean onTouch(View v, MotionEvent event) {
+        if (Math.abs(mDeBounce - event.getEventTime()) < 250) {
+            //Ignore if it's been less then 250ms since
+            //the item was last clicked
+            return true;
+        }
+
+        switch (event.getAction()) {
+
+            case MotionEvent.ACTION_UP:
+
+                Log.d("if", "position " +Math.round(event.getY()) + " action up " + (Math.round(event.getY()) - downPosition));
+                if (Math.round(event.getY()) - downPosition > 25) {
+                    if (mDeBounce > event.getDownTime()) {
+
+                        return true;
+                    }
+                    Log.d("if", "if");
+                    mDeBounce = event.getEventTime();
+                    hideSystemUi();
+                    return true;
+
+                } else if (Math.round(event.getY() - downPosition) < -25) {
+                    showSystemUI();
+                    Log.d("if", "else");
+                }
+                break;
+            case MotionEvent.ACTION_DOWN:
+
+                downPosition = Math.round(event.getY());
+                Log.d("if", "downPosition " + downPosition);
+
+                break;
+        }
+
+        return false;
+    }
+
+    //if fragment not visible -> pause music
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+
+        if (!isVisibleToUser) {
+            releasePlayer();
+        } else {
+            if (song != null) {
+                if (playerView.getPlayer() == null) {
+                    initializePlayer(song.getSonglink());
+                    Log.d(TAG, " init in setUserVisibleHint " + position);
+
+                }
+                player.setPlayWhenReady(true);
+            }
+
+        }
+    }
 
     class PlayerEventListener extends Player.DefaultEventListener {
         @Override
         public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
-            switch (playbackState){
+            switch (playbackState) {
                 case Player.STATE_ENDED:
-                    if(getActivity() instanceof PlayMusicActivity){
-                        PlayMusicActivity playMusicActivity = (PlayMusicActivity)getActivity();
+                    if (getActivity() instanceof PlayMusicActivity) {
+                        PlayMusicActivity playMusicActivity = (PlayMusicActivity) getActivity();
                         current = playMusicActivity.getCurrentPosition();
-                        if(current < playMusicActivity.getSongSize()){
+                        if (current < playMusicActivity.getSongSize()) {
                             playMusicActivity.setNextFragment(current);
                         }
                     }
@@ -420,27 +490,4 @@ public class PlayMusicFragment extends Fragment implements GetImageFromUrl.IOnGe
             Log.d("minhnq", "onSeekProcessed");
         }
     }
-
-
-
-    //if fragment not visible -> pause music
-    @Override
-    public void setUserVisibleHint(boolean isVisibleToUser) {
-        super.setUserVisibleHint(isVisibleToUser);
-
-        if (!isVisibleToUser) {
-            releasePlayer();
-        } else {
-            if (song != null) {
-                if( playerView.getPlayer() ==null){
-                    initializePlayer(song.getSonglink());
-                    Log.d(TAG," init in setUserVisibleHint " + position);
-
-                }
-                player.setPlayWhenReady(true);
-            }
-
-        }
-    }
-
 }
