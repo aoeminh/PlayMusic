@@ -68,6 +68,7 @@ public class PlayMusicFragment extends Fragment implements GetImageFromUrl.IOnGe
     private long playbackPosition = 0;
     private boolean playWhenReady = false;
 
+    private boolean isVisible = false;
     private boolean shouldAutoPlay = true;
     private DefaultTrackSelector trackSelector = null;
     private TrackGroupArray lastSeenTrackGroupArray = null;
@@ -106,6 +107,7 @@ public class PlayMusicFragment extends Fragment implements GetImageFromUrl.IOnGe
             song = getArguments().getParcelable("song");
             position = getArguments().getInt("position");
         }
+        isVisible = getUserVisibleHint();
 
 
         Log.d(TAG, "onCreate " + position);
@@ -124,22 +126,26 @@ public class PlayMusicFragment extends Fragment implements GetImageFromUrl.IOnGe
         initView(view);
 
         //init
-        if (playerView.getPlayer() ==null){
-            initializePlayer(song.getSonglink());
-            Log.d(TAG," init in onCreateView " + position);
-        }
+            if (playerView.getPlayer() ==null){
+                initializePlayer(song.getSonglink());
+                player.setPlayWhenReady(true);
+
+                Log.d(TAG," init in onCreateView " + position);
+
+            }
+
+            if(isVisible){
+                player.setPlayWhenReady(true);
+                initPlayerNoty();
+            }else {
+                player.setPlayWhenReady(false);
+            }
 
 
         if (getActivity() instanceof PlayMusicActivity) {
             current = ((PlayMusicActivity)getActivity()).getCurrentPosition();
         }
 
-        if(position ==0 && current ==0){
-            Log.d(TAG," init in onCreateView player.setPlayWhenReady(true); " + current);
-            player.setPlayWhenReady(true);
-        }else {
-            player.setPlayWhenReady(false);
-        }
 
         return view;
     }
@@ -167,53 +173,7 @@ public class PlayMusicFragment extends Fragment implements GetImageFromUrl.IOnGe
         lastSeenTrackGroupArray = null;
 
         player = ExoPlayerFactory.newSimpleInstance(getActivity(), trackSelector);
-        playerNotificationManager = PlayerNotificationManager.createWithNotificationChannel(getActivity(), "1",
-                R.string.bottom_sheet_behavior, 1, new PlayerNotificationManager.MediaDescriptionAdapter() {
-                    @Override
-                    public String getCurrentContentTitle(Player player) {
-                        return song.getSongName();
-                    }
 
-                    @Nullable
-                    @Override
-                    public PendingIntent createCurrentContentIntent(Player player) {
-                        Intent intent = new Intent(getActivity(),PlayMusicActivity.class);
-                        Bundle bundle = new Bundle();
-                        ArrayList<Song> songs = new ArrayList<>();
-                        songs.add(song);
-                        bundle.putParcelableArrayList("song",songs);
-                        bundle.putInt("position",position);
-                        return PendingIntent.getActivity(getActivity(),0,intent,PendingIntent.FLAG_UPDATE_CURRENT);
-                    }
-
-                    @Nullable
-                    @Override
-                    public String getCurrentContentText(Player player) {
-                        return song.getSinger();
-                    }
-
-                    @Nullable
-                    @Override
-                    public Bitmap getCurrentLargeIcon(Player player, PlayerNotificationManager.BitmapCallback callback) {
-                        return bitmap1;
-                    }
-                });
-        playerNotificationManager.setPlayer(player);
-        playerNotificationManager.setVisibility(View.VISIBLE);
-        playerNotificationManager.setOngoing(false);
-        playerNotificationManager.setUseNavigationActions(true);
-        playerNotificationManager.setUsePlayPauseActions(true);
-        playerNotificationManager.setNotificationListener(new PlayerNotificationManager.NotificationListener() {
-            @Override
-            public void onNotificationStarted(int notificationId, Notification notification) {
-
-            }
-
-            @Override
-            public void onNotificationCancelled(int notificationId) {
-
-            }
-        });
         if (player != null) {
             player.addListener(new PlayerEventListener());
             player.addListener(new ExoPlayerListerner());
@@ -427,7 +387,6 @@ public class PlayMusicFragment extends Fragment implements GetImageFromUrl.IOnGe
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
-
         if (!isVisibleToUser) {
             releasePlayer();
         } else {
@@ -438,9 +397,65 @@ public class PlayMusicFragment extends Fragment implements GetImageFromUrl.IOnGe
 
                 }
                 player.setPlayWhenReady(true);
+                initPlayerNoty();
             }
 
         }
+    }
+
+    private void initPlayerNoty(){
+        playerNotificationManager = PlayerNotificationManager.createWithNotificationChannel(getActivity(), "1",
+                R.string.bottom_sheet_behavior, 1, new PlayerNotificationManager.MediaDescriptionAdapter() {
+                    @Override
+                    public String getCurrentContentTitle(Player player) {
+                        return song.getSongName();
+                    }
+
+                    @Nullable
+                    @Override
+                    public PendingIntent createCurrentContentIntent(Player player) {
+                        Intent intent = new Intent(getActivity(),PlayMusicActivity.class);
+                        Bundle bundle = new Bundle();
+                        ArrayList<Song> songs = new ArrayList<>();
+                        songs.add(song);
+                        bundle.putParcelableArrayList("song",songs);
+                        bundle.putInt("position",position);
+                        intent.putExtras(bundle);
+                        return PendingIntent.getActivity(getActivity(),0,intent,PendingIntent.FLAG_UPDATE_CURRENT);
+                    }
+
+                    @Nullable
+                    @Override
+                    public String getCurrentContentText(Player player) {
+                        return song.getSinger();
+                    }
+
+                    @Nullable
+                    @Override
+                    public Bitmap getCurrentLargeIcon(Player player, PlayerNotificationManager.BitmapCallback callback) {
+                        return bitmap1;
+                    }
+                });
+        playerNotificationManager.setPlayer(player);
+        playerNotificationManager.setVisibility(View.VISIBLE);
+        if(player.getPlayWhenReady()){
+            playerNotificationManager.setOngoing(false);
+        }else {
+            playerNotificationManager.setOngoing(false);
+        }
+        playerNotificationManager.setUseNavigationActions(true);
+        playerNotificationManager.setUsePlayPauseActions(true);
+        playerNotificationManager.setNotificationListener(new PlayerNotificationManager.NotificationListener() {
+            @Override
+            public void onNotificationStarted(int notificationId, Notification notification) {
+
+            }
+
+            @Override
+            public void onNotificationCancelled(int notificationId) {
+
+            }
+        });
     }
 
 }
