@@ -43,22 +43,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class PlayMusicActivity extends AppCompatActivity{
-    PlayerView playerView;
-    private static final String KEY_PLAY_WHEN_READY = "play_when_ready";
-    private static final String KEY_WINDOW = "window";
-    private static final String KEY_POSITION = "positio";
-    private SimpleExoPlayer player;
-    private int currentWindow = 0;
-    private long playbackPosition =0;
-    private boolean playWhenReady =false;
 
-    private boolean shouldAutoPlay = true;
-    private DefaultTrackSelector trackSelector= null;
-    private TrackGroupArray lastSeenTrackGroupArray = null;
-    private DataSource.Factory  mediaDataSourceFactory;
-    private BandwidthMeter bandwidthMeter =  new DefaultBandwidthMeter();
-
-    private ProgressBar mProgressBar;
     private ViewPager viewPager;
     private PlayMusicAdapter adapter;
     private ArrayList<Song> songs;

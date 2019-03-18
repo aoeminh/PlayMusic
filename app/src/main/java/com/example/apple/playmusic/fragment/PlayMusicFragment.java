@@ -81,10 +81,11 @@ public class PlayMusicFragment extends Fragment implements GetImageFromUrl.IOnGe
     private int position;
     private RelativeLayout mFrameLayout;
     private ViewPager viewPager;
-    int current =0;
+    int current = 0;
     Bitmap bitmap1;
 
     private PlayerNotificationManager playerNotificationManager;
+
     public static PlayMusicFragment newInstance(Song song, int position) {
         PlayMusicFragment fragment = new PlayMusicFragment();
         Bundle bundle = new Bundle();
@@ -126,13 +127,15 @@ public class PlayMusicFragment extends Fragment implements GetImageFromUrl.IOnGe
         initView(view);
 
         //init
-            if (playerView.getPlayer() ==null){
+            if (playerView.getPlayer() == null) {
                 initializePlayer(song.getSonglink());
                 player.setPlayWhenReady(true);
 
-                Log.d(TAG," init in onCreateView " + position);
+                Log.d(TAG, " init in onCreateView " + position);
 
-            }
+
+
+        }
 
             if(isVisible){
                 player.setPlayWhenReady(true);
@@ -277,6 +280,16 @@ public class PlayMusicFragment extends Fragment implements GetImageFromUrl.IOnGe
                 | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
                 | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
                 | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
+    }
+
+    // Shows the system bars by removing all the flags
+// except for the ones that make the content appear under the system bars.
+
+    private void showSystemUI() {
+        mFrameLayout.setSystemUiVisibility(
+                View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
     }
 
     private void updateStartPosition() {
@@ -458,4 +471,4 @@ public class PlayMusicFragment extends Fragment implements GetImageFromUrl.IOnGe
         });
     }
 
-}
+    }
