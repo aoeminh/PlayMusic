@@ -56,7 +56,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 
-public class PlayMusicFragment extends Fragment implements GetImageFromUrl.IOnGetBitmap, View.OnTouchListener {
+public class PlayMusicFragment extends Fragment implements GetImageFromUrl.IOnGetBitmap {
 
     public static final String TAG = "PlayMusicFragment";
     PlayerView playerView;
@@ -123,7 +123,6 @@ public class PlayMusicFragment extends Fragment implements GetImageFromUrl.IOnGe
         }
         View view = inflater.inflate(R.layout.fragment_play_music, container, false);
         initView(view);
-        playerView.setOnTouchListener(this);
         //init
         if (playerView.getPlayer() == null) {
             initializePlayer(song.getSonglink());
@@ -357,47 +356,47 @@ public class PlayMusicFragment extends Fragment implements GetImageFromUrl.IOnGe
         }
 
     }
-
-    private static long mDeBounce = 0;
-    int downPosition = 0;
-    @Override
-    public boolean onTouch(View v, MotionEvent event) {
-        if (Math.abs(mDeBounce - event.getEventTime()) < 250) {
-            //Ignore if it's been less then 250ms since
-            //the item was last clicked
-            return true;
-        }
-
-        switch (event.getAction()) {
-
-            case MotionEvent.ACTION_UP:
-
-                Log.d("if", "position " +Math.round(event.getY()) + " action up " + (Math.round(event.getY()) - downPosition));
-                if (Math.round(event.getY()) - downPosition > 25) {
-                    if (mDeBounce > event.getDownTime()) {
-
-                        return true;
-                    }
-                    Log.d("if", "if");
-                    mDeBounce = event.getEventTime();
-                    hideSystemUi();
-                    return true;
-
-                } else if (Math.round(event.getY() - downPosition) < -25) {
-                    showSystemUI();
-                    Log.d("if", "else");
-                }
-                break;
-            case MotionEvent.ACTION_DOWN:
-
-                downPosition = Math.round(event.getY());
-                Log.d("if", "downPosition " + downPosition);
-
-                break;
-        }
-
-        return false;
-    }
+//
+//    private static long mDeBounce = 0;
+//    int downPosition = 0;
+//    @Override
+//    public boolean onTouch(View v, MotionEvent event) {
+//        if (Math.abs(mDeBounce - event.getEventTime()) < 250) {
+//            //Ignore if it's been less then 250ms since
+//            //the item was last clicked
+//            return true;
+//        }
+//
+//        switch (event.getAction()) {
+//
+//            case MotionEvent.ACTION_UP:
+//
+//                Log.d("if", "position " +Math.round(event.getY()) + " action up " + (Math.round(event.getY()) - downPosition));
+//                if (Math.round(event.getY()) - downPosition > 25) {
+//                    if (mDeBounce > event.getDownTime()) {
+//
+//                        return true;
+//                    }
+//                    Log.d("if", "if");
+//                    mDeBounce = event.getEventTime();
+//                    hideSystemUi();
+//                    return true;
+//
+//                } else if (Math.round(event.getY() - downPosition) < -25) {
+//
+//                    Log.d("if", "else");
+//                }
+//                break;
+//            case MotionEvent.ACTION_DOWN:
+//
+//                downPosition = Math.round(event.getY());
+//                Log.d("if", "downPosition " + downPosition);
+//
+//                break;
+//        }
+//
+//        return false;
+//    }
 
     //if fragment not visible -> pause music
     @Override
