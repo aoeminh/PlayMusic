@@ -129,11 +129,7 @@ public class PlayMusicFragment extends Fragment implements GetImageFromUrl.IOnGe
         //init
             if (playerView.getPlayer() == null) {
                 initializePlayer(song.getSonglink());
-                player.setPlayWhenReady(true);
-
                 Log.d(TAG, " init in onCreateView " + position);
-
-
 
         }
 
