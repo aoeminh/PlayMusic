@@ -129,7 +129,7 @@ public class PlayMusicFragment extends Fragment implements GetImageFromUrl.IOnGe
             song = getArguments().getParcelable("song");
             position = getArguments().getInt("position");
         }
-//        isVisible = getUserVisibleHint();
+        isVisible = getUserVisibleHint();
 
 
         Log.d(TAG, "onCreate " + position);
@@ -149,19 +149,23 @@ public class PlayMusicFragment extends Fragment implements GetImageFromUrl.IOnGe
 
         //init
         if (playerView.getPlayer() == null) {
-            initPlayerNoty();
 
-            initializePlayer(song.getSonglink());
             Log.d(TAG, " init in onCreateView " + position);
 
         }
 
         if (isVisible) {
+            initPlayerNoty();
+
+            initializePlayer(song.getSonglink());
             player.setPlayWhenReady(true);
             showNotification(mStateBuilder.build());
 
         } else {
-            player.setPlayWhenReady(false);
+            if(player !=null){
+                player.setPlayWhenReady(false);
+
+            }
         }
 
 
@@ -184,8 +188,7 @@ public class PlayMusicFragment extends Fragment implements GetImageFromUrl.IOnGe
     }
 
     private void initializePlayer(String url) {
-        GetImageFromUrl getImageFromUrl = new GetImageFromUrl(this);
-        getImageFromUrl.execute(song.getSongImage());
+
         playerView.requestFocus();
         mediaDataSourceFactory = new DefaultDataSourceFactory(getActivity(), Util.getUserAgent(getActivity(), "mediaPlayerSample"),
                 (TransferListener<? super DataSource>) bandwidthMeter);
@@ -203,25 +206,19 @@ public class PlayMusicFragment extends Fragment implements GetImageFromUrl.IOnGe
         MediaSource mediaSource = new ExtractorMediaSource.Factory(mediaDataSourceFactory)
                 .createMediaSource(Uri.parse(url));
         boolean haveStartPosition = currentWindow != C.INDEX_UNSET;
-//            if (haveStartPosition) {
-//                player.seekTo(currentWindow, playbackPosition);
-//            }
 
         player.prepare(mediaSource, !haveStartPosition, false);
         playerView.setPlayer(player);
         playerView.setControllerHideOnTouch(false);
 
+        GetImageFromUrl getImageFromUrl = new GetImageFromUrl(this);
+        getImageFromUrl.execute(song.getSongImage());
     }
 
 
     @Override
     public void onStart() {
         super.onStart();
-//        if (player == null && song != null) {
-//            initializePlayer(song.getSonglink());
-//        }
-
-
         Log.d(TAG, "onStart " + position);
     }
 
@@ -428,14 +425,12 @@ public class PlayMusicFragment extends Fragment implements GetImageFromUrl.IOnGe
         } else {
             if (song != null) {
                 if (playerView.getPlayer() == null) {
+                    initPlayerNoty();
                     initializePlayer(song.getSonglink());
                     Log.d(TAG, " init in setUserVisibleHint " + position);
 
                 }
                 player.setPlayWhenReady(true);
-                if(mStateBuilder!=null){
-                    showNotification(mStateBuilder.build());
-                }
 
             }
 
@@ -465,47 +460,35 @@ public class PlayMusicFragment extends Fragment implements GetImageFromUrl.IOnGe
         public void onPlay() {
 
             player.setPlayWhenReady(true);
-            if((player.getPlaybackState() == ExoPlayer.STATE_READY) && playWhenReady) {
-                mStateBuilder.setState(PlaybackStateCompat.STATE_PLAYING,
-                        player.getCurrentPosition(), 1f);
-                Log.d("onPlayerStateChanged:", "PLAYING");
-                Log.d("play", "onPlay " + player.getPlayWhenReady());
-            }
-            if(isVisible){
-                mMediaSession.setPlaybackState(mStateBuilder.build());
-                showNotification(mStateBuilder.build());
-            }
 
         }
 
         @Override
         public void onPause() {
                 player.setPlayWhenReady(false);
-            if((player.getPlaybackState() == ExoPlayer.STATE_READY)){
-                mStateBuilder.setState(PlaybackStateCompat.STATE_PAUSED,
-                        player.getCurrentPosition(), 1f);
-                Log.d("onPlayerStateChanged:", "PAUSED");
-            }
-
-                mMediaSession.setPlaybackState(mStateBuilder.build());
-                showNotification(mStateBuilder.build());
-
-
-            Log.d("play", "onPause " + player.getPlayWhenReady());
-
 
         }
 
         @Override
         public void onSkipToPrevious() {
 
-                player.seekTo(0);
+            PlayMusicActivity playMusicActivity = (PlayMusicActivity) getActivity();
+            current = playMusicActivity.getCurrentPosition();
+            if (current < playMusicActivity.getSongSize()) {
+                playMusicActivity.setNextFragment(current);
+            }
 
         }
 
         @Override
-        public void onFastForward() {
-            super.onFastForward();
+        public void onSkipToNext() {
+
+            PlayMusicActivity playMusicActivity = (PlayMusicActivity) getActivity();
+            current = playMusicActivity.getCurrentPosition();
+            if (current < playMusicActivity.getSongSize()) {
+                playMusicActivity.setNextFragment(current);
+            }
+
         }
     }
 
@@ -537,9 +520,15 @@ public class PlayMusicFragment extends Fragment implements GetImageFromUrl.IOnGe
                         PlaybackStateCompat.ACTION_PLAY_PAUSE));
 
         NotificationCompat.Action restartAction = new NotificationCompat.Action(
-                R.drawable.exo_controls_previous, "Previous",
+                R.drawable.exo_controls_previous, "Previou",
                 MediaButtonReceiver.buildMediaButtonPendingIntent(getActivity(),
                         PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS));
+
+
+        NotificationCompat.Action nextAction = new NotificationCompat.Action(
+                R.drawable.exo_controls_next, "Next",
+                MediaButtonReceiver.buildMediaButtonPendingIntent(getActivity(),
+                        PlaybackStateCompat.ACTION_SKIP_TO_NEXT));
 
         PendingIntent contentPendingIntent = PendingIntent.getActivity
                 (getActivity(), 0, new Intent(getActivity(), PlayMusicActivity.class), 0);
@@ -549,15 +538,17 @@ public class PlayMusicFragment extends Fragment implements GetImageFromUrl.IOnGe
         builder.setContentTitle(song.getSongName())
                 .setContentText(song.getSinger())
                 .setContentIntent(contentPendingIntent)
-                .setSmallIcon(R.drawable.icon_play)
+                .setSmallIcon(R.drawable.exo_notification_play)
                 .setLargeIcon(bitmap1)
                 .setColorized(true)
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+                .addAction(nextAction)
                 .addAction(restartAction)
+
                 .addAction(playPauseAction)
                 .setStyle(new android.support.v4.media.app.NotificationCompat.MediaStyle()
                         .setMediaSession(token)
-                        .setShowActionsInCompactView(0, 1));
+                        .setShowActionsInCompactView(0, 1, 2));
 
         mNotificationManager = (NotificationManager) getActivity().getSystemService(NOTIFICATION_SERVICE);
         mNotificationManager.notify(song.getSongId(), builder.build());
@@ -574,6 +565,7 @@ public class PlayMusicFragment extends Fragment implements GetImageFromUrl.IOnGe
 
         @Override
         public void onReceive(Context context, Intent intent) {
+            Log.d("minhnqq","MediaReceiver");
             MediaButtonReceiver.handleIntent(mMediaSession, intent);
         }
     }
