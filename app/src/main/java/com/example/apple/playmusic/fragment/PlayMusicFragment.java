@@ -6,12 +6,19 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
+import android.media.MediaMetadata;
+import android.media.session.MediaSession;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.media.MediaDescriptionCompat;
+import android.support.v4.media.MediaMetadataCompat;
+import android.support.v4.media.session.MediaSessionCompat;
+import android.support.v4.media.session.PlaybackStateCompat;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -35,6 +42,8 @@ import com.google.android.exoplayer2.PlaybackParameters;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.Timeline;
+import com.google.android.exoplayer2.ext.mediasession.MediaSessionConnector;
+import com.google.android.exoplayer2.ext.mediasession.TimelineQueueNavigator;
 import com.google.android.exoplayer2.source.ConcatenatingMediaSource;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
@@ -74,7 +83,7 @@ public class PlayMusicFragment extends Fragment implements GetImageFromUrl.IOnGe
     private TrackGroupArray lastSeenTrackGroupArray = null;
     private DataSource.Factory mediaDataSourceFactory;
     private BandwidthMeter bandwidthMeter = new DefaultBandwidthMeter();
-
+    MediaSessionCompat mediaSession;
     private ProgressBar mProgressBar;
     private TextView tvSongName, tvSinger;
     private Song song;
@@ -166,7 +175,7 @@ public class PlayMusicFragment extends Fragment implements GetImageFromUrl.IOnGe
         getImageFromUrl.execute(song.getSongImage());
         playerView.requestFocus();
         mediaDataSourceFactory = new DefaultDataSourceFactory(getActivity(), Util.getUserAgent(getActivity(), "mediaPlayerSample"),
-                (TransferListener<? super DataSource>) bandwidthMeter);
+                (TransferListener) bandwidthMeter);
         AdaptiveTrackSelection.Factory videoTrackSelectionFactory = new AdaptiveTrackSelection.Factory(bandwidthMeter);
 
         trackSelector = new DefaultTrackSelector(videoTrackSelectionFactory);
@@ -436,6 +445,7 @@ public class PlayMusicFragment extends Fragment implements GetImageFromUrl.IOnGe
                         return bitmap1;
                     }
                 });
+
         playerNotificationManager.setPlayer(player);
         playerNotificationManager.setVisibility(View.VISIBLE);
         if(player.getPlayWhenReady()){
@@ -445,17 +455,48 @@ public class PlayMusicFragment extends Fragment implements GetImageFromUrl.IOnGe
         }
         playerNotificationManager.setUseNavigationActions(true);
         playerNotificationManager.setUsePlayPauseActions(true);
-        playerNotificationManager.setNotificationListener(new PlayerNotificationManager.NotificationListener() {
+         mediaSession = new MediaSessionCompat(getActivity(), "TestAudio");
+        mediaSession.setActive(true);
+
+        MediaSessionConnector mediaSessionConnector = new MediaSessionConnector(mediaSession);
+        mediaSessionConnector.setQueueNavigator(new TimelineQueueNavigator(mediaSession) {
             @Override
-            public void onNotificationStarted(int notificationId, Notification notification) {
-
-            }
-
-            @Override
-            public void onNotificationCancelled(int notificationId) {
-
+            public MediaDescriptionCompat getMediaDescription(int windowIndex) {
+                return updateMediaSessionMetaData();
             }
         });
+        mediaSessionConnector.setPlayer(player, null);
+
+        PlaybackStateCompat playbackStateCompat = new PlaybackStateCompat.Builder()
+                .setActions(
+                        PlaybackStateCompat.ACTION_SEEK_TO |
+                                PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS |
+                                PlaybackStateCompat.ACTION_SKIP_TO_NEXT |
+                                PlaybackStateCompat.ACTION_PLAY |
+                                PlaybackStateCompat.ACTION_PAUSE
+                )
+                .setState(
+                        PlaybackStateCompat.STATE_PAUSED,
+                        0,
+                        1.0f)
+                .build();
+        mediaSession.setPlaybackState(playbackStateCompat);
+        playerNotificationManager.setMediaSessionToken(mediaSession.getSessionToken());
+
     }
+
+    private MediaDescriptionCompat updateMediaSessionMetaData() {
+        MediaMetadataCompat.Builder metaDataBuilder = new MediaMetadataCompat.Builder();
+        Bitmap albumArtBitmap = BitmapFactory.decodeResource(getResources(),
+                R.drawable.ic_launcher_background);
+        metaDataBuilder.putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, albumArtBitmap);
+        metaDataBuilder.putBitmap(MediaMetadataCompat.METADATA_KEY_ART, albumArtBitmap);
+
+        mediaSession.setMetadata(metaDataBuilder.build());
+
+        MediaDescriptionCompat description = metaDataBuilder.build().getDescription();
+        return description;
+    }
+
 
 }
