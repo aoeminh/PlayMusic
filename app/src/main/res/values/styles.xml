@@ -33,6 +33,8 @@
         <item name="android:textStyle">normal</item>
     </style>
 
-
+    <style name="Base.Widget.Design.TabLayout" parent="android:Widget">
+        <item name="tabBackground">@drawable/tab_background</item>
+    </style>
 
 </resources>

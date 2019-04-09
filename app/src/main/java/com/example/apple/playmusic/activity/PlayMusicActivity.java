@@ -96,8 +96,20 @@ public class PlayMusicActivity extends AppCompatActivity{
         viewPager.setCurrentItem(curentPostion +1);
     }
 
+    public void setPrevioudFragment(int curentPostion){
+        viewPager.setCurrentItem(curentPostion - 1);
+    }
+
     public int getSongSize(){
         return songs.size();
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+    }
+
+
 
 }

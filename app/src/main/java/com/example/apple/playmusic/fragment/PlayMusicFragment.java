@@ -267,6 +267,10 @@ public class PlayMusicFragment extends Fragment implements GetImageFromUrl.IOnGe
         Log.d(TAG, "onDestroy " + position);
         releasePlayer();
         mMediaSession.setActive(false);
+        if(mNotificationManager !=null){
+            mNotificationManager.cancel(song.getSongId());
+        }
+
     }
 
     @Override
@@ -447,7 +451,8 @@ public class PlayMusicFragment extends Fragment implements GetImageFromUrl.IOnGe
                 PlaybackStateCompat.ACTION_PLAY |
                         PlaybackStateCompat.ACTION_PAUSE |
                         PlaybackStateCompat.ACTION_PLAY_PAUSE |
-                        PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS);
+                        PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS |
+                        PlaybackStateCompat.ACTION_SKIP_TO_NEXT);
 
         mMediaSession.setPlaybackState(mStateBuilder.build());
         mMediaSession.setCallback(new MySessionCallback());
@@ -474,8 +479,8 @@ public class PlayMusicFragment extends Fragment implements GetImageFromUrl.IOnGe
 
             PlayMusicActivity playMusicActivity = (PlayMusicActivity) getActivity();
             current = playMusicActivity.getCurrentPosition();
-            if (current < playMusicActivity.getSongSize()) {
-                playMusicActivity.setNextFragment(current);
+            if (current > 0) {
+                playMusicActivity.setPrevioudFragment(current);
             }
 
         }
@@ -495,7 +500,7 @@ public class PlayMusicFragment extends Fragment implements GetImageFromUrl.IOnGe
 
     private void showNotification(PlaybackStateCompat state) {
 
-
+        boolean isCancel = false;
         Log.d("noti", song.getSongName());
         // You only need to create the channel on API 26+ devices
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -509,9 +514,11 @@ public class PlayMusicFragment extends Fragment implements GetImageFromUrl.IOnGe
         if (state.getState() == PlaybackStateCompat.STATE_PLAYING) {
             icon = R.drawable.exo_controls_pause;
             play_pause = "Pause";
+            isCancel = true;
         } else {
             icon = R.drawable.exo_controls_play;
             play_pause ="Play";
+            isCancel = false;
         }
 
         NotificationCompat.Action playPauseAction = new NotificationCompat.Action(
@@ -540,6 +547,7 @@ public class PlayMusicFragment extends Fragment implements GetImageFromUrl.IOnGe
                 .setContentIntent(contentPendingIntent)
                 .setSmallIcon(R.drawable.exo_notification_play)
                 .setLargeIcon(bitmap1)
+                .setOngoing(isCancel)
                 .setColorized(true)
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                 .addAction(nextAction)
@@ -593,5 +601,9 @@ public class PlayMusicFragment extends Fragment implements GetImageFromUrl.IOnGe
     }
 
 
-
+    public void cancelAllNoit(){
+        if(mNotificationManager != null){
+            mNotificationManager.cancelAll();
+        }
+    }
 }
