@@ -53,6 +53,10 @@ public interface DataService {
     @POST("songlist.php")
     Call<ArrayList<Song>> getSongFromAlbum(@Field("albumId") String albumId);
 
+    @FormUrlEncoded
+    @POST("search.php")
+    Call<ArrayList<Song>> getSongFromSearch(@Field("songName") String songname);
+
     @GET("allPlaylist.php")
     Call<ArrayList<Playlist>> getAllPlaylist();
 

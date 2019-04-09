@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
-   >
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <SearchView
         android:id="@+id/simpleSearchView"
@@ -10,5 +10,11 @@
         android:layout_height="wrap_content"
         android:queryHint="Search song"
         android:iconifiedByDefault="false"
+        />
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rv_search_fragment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/simpleSearchView"
         />
 </android.support.constraint.ConstraintLayout>
