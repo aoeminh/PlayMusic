@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.apple.playmusic.R;
+import com.example.apple.playmusic.action.IOnItemClick;
 import com.example.apple.playmusic.model.Song;
 
 import java.util.ArrayList;
@@ -18,10 +19,12 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
 
     private Context context;
     private ArrayList<Song> songArrayList = new ArrayList<>();
+    private IOnItemClick mIOnItemClick;
 
-    public SearchAdapter(Context context, ArrayList<Song> songs){
+    public SearchAdapter(Context context, ArrayList<Song> songs,IOnItemClick i){
         this.context =context;
         this.songArrayList = songs;
+        this.mIOnItemClick = i;
     }
     @NonNull
     @Override
@@ -49,6 +52,9 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
             super(itemView);
             tvSingerName = itemView.findViewById(R.id.tv_singer_item_search);
             tvSongName = itemView.findViewById(R.id.tv_song_name_item_search);
+            itemView.setOnClickListener( v -> {
+                mIOnItemClick.onClickItem(getAdapterPosition());
+            });
         }
     }
 }

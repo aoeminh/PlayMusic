@@ -1,6 +1,7 @@
 package com.example.apple.playmusic.fragment;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -15,8 +16,11 @@ import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.SearchView;
+import android.widget.Toast;
 
 import com.example.apple.playmusic.R;
+import com.example.apple.playmusic.action.IOnItemClick;
+import com.example.apple.playmusic.activity.PlayMusicActivity;
 import com.example.apple.playmusic.contract.ISearchPresenter;
 import com.example.apple.playmusic.contract.ISearchView;
 import com.example.apple.playmusic.model.Song;
@@ -24,12 +28,13 @@ import com.example.apple.playmusic.presenter.SearchPresenter;
 
 import java.util.ArrayList;
 
-public class SearchFragment extends Fragment implements View.OnTouchListener, ISearchView {
+public class SearchFragment extends Fragment implements View.OnTouchListener, ISearchView, IOnItemClick {
     View view;
     SearchView searchView;
     ISearchPresenter presenter;
     SearchAdapter adapter;
     RecyclerView rvSearch;
+    ArrayList<Song> mSongs;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -81,11 +86,21 @@ public class SearchFragment extends Fragment implements View.OnTouchListener, IS
 
     @Override
     public void onResponseSearch(ArrayList<Song> songs) {
-        adapter = new SearchAdapter(getActivity(),songs);
+        mSongs = songs;
+        adapter = new SearchAdapter(getActivity(),songs,this::onClickItem);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         rvSearch.setAdapter(adapter);
         rvSearch.setLayoutManager(layoutManager);
 
+    }
+
+    @Override
+    public void onClickItem(int position) {
+        ArrayList<Song> lovesongs = new ArrayList<>();
+        lovesongs.add(mSongs.get(position));
+        Intent intent = new Intent(getActivity(), PlayMusicActivity.class);
+        intent.putParcelableArrayListExtra("song",lovesongs);
+        startActivity(intent);
     }
 }
