@@ -10,4 +10,7 @@
     <color name="text_color_advertise">#ffffff</color>
     <color name="text_color_icon_item_playlist_fragmen">#ffff</color>
     <color name="background_toolbar_color">#ed7c30</color>
+    <color name="text_color_not_result">#A3A3A3</color>
+    <color name="color_back_ground_for_waitting_search">#E2E2E2</color>
+    <color name="color_back_ground_for_search_done">#FAFAFA</color>
 </resources>

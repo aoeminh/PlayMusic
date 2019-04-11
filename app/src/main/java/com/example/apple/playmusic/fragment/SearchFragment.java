@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -16,7 +17,9 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.SearchView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.apple.playmusic.R;
@@ -29,13 +32,16 @@ import com.example.apple.playmusic.presenter.SearchPresenter;
 
 import java.util.ArrayList;
 
-public class SearchFragment extends Fragment implements View.OnTouchListener, ISearchView, IOnItemClick {
+public class SearchFragment extends Fragment implements ISearchView, IOnItemClick,SearchView.OnQueryTextListener, View.OnClickListener {
     View view;
     SearchView searchView;
     ISearchPresenter presenter;
     SearchAdapter adapter;
     RecyclerView rvSearch;
     ArrayList<Song> mSongs;
+    TextView tvNotResult;
+    ProgressBar mProgressBar;
+    ConstraintLayout mLayout;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -48,51 +54,39 @@ public class SearchFragment extends Fragment implements View.OnTouchListener, IS
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.search_fragment,container,false);
-         searchView=  view.findViewById(R.id.simpleSearchView);
-         rvSearch = view.findViewById(R.id.rv_search_fragment);
-         searchView.setOnTouchListener(this);
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String s) {
-                return false;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String s) {
-
-                presenter.getSongFromSearch(s);
-                return false;
-            }
-        });
-
+        initView(view);
+        setAction();
         return view;
     }
 
-    @Override
-    public boolean onTouch(View view, MotionEvent motionEvent) {
-        if(view.getId() == R.id.simpleSearchView){
-            showKeyboard();
-        }else {
-            InputMethodManager imm = (InputMethodManager) getActivity()
-                    .getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.hideSoftInputFromWindow(searchView.getWindowToken(), 0);
-        }
-        return false;
+    private void initView(View view){
+        searchView=  view.findViewById(R.id.simpleSearchView);
+        rvSearch = view.findViewById(R.id.rv_search_fragment);
+        tvNotResult= view.findViewById(R.id.tv_not_result);
+        mProgressBar = view.findViewById(R.id.progress_bar);
+        mLayout = view.findViewById(R.id.layout_search_fragment);
+
     }
 
-    private void showKeyboard(){
-        getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
-
+    private void setAction(){
+        searchView.setOnQueryTextListener(this);
+        rvSearch.setOnClickListener(this);
     }
 
     @Override
     public void onResponseSearch(ArrayList<Song> songs) {
-        mSongs = songs;
-        adapter = new SearchAdapter(getActivity(),songs,this::onClickItem);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
-        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        rvSearch.setAdapter(adapter);
-        rvSearch.setLayoutManager(layoutManager);
+        hideProgressBar();
+        if(songs.size()>0){
+            mSongs = songs;
+            adapter = new SearchAdapter(getActivity(),songs,this::onClickItem);
+            LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
+            layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+            rvSearch.setAdapter(adapter);
+            rvSearch.setLayoutManager(layoutManager);
+            tvNotResult.setVisibility(View.GONE);
+        }else {
+            tvNotResult.setVisibility(View.VISIBLE);
+        }
 
     }
 
@@ -106,34 +100,51 @@ public class SearchFragment extends Fragment implements View.OnTouchListener, IS
     }
 
 
-    I found a better solution:
-
-    Override the dispatchTouchEvent method in your Activity .
-
-    @Override
-    public boolean dispatchTouchEvent(MotionEvent ev) {
-        View v = getCurrentFocus();
-
-        if (v != null &&
-                (ev.getAction() == MotionEvent.ACTION_UP || ev.getAction() == MotionEvent.ACTION_MOVE) &&
-                v instanceof EditText &&
-                !v.getClass().getName().startsWith("android.webkit.")) {
-            int scrcoords[] = new int[2];
-            v.getLocationOnScreen(scrcoords);
-            float x = ev.getRawX() + v.getLeft() - scrcoords[0];
-            float y = ev.getRawY() + v.getTop() - scrcoords[1];
-
-            if (x < v.getLeft() || x > v.getRight() || y < v.getTop() || y > v.getBottom())
-                hideKeyboard(this);
-        }
-        return super.dispatchTouchEvent(ev);
-    }
-
-    public static void hideKeyboard(Activity activity) {
+    private   void hideKeyboard(Activity activity) {
         if (activity != null && activity.getWindow() != null && activity.getWindow().getDecorView() != null) {
             InputMethodManager imm = (InputMethodManager)activity.getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(activity.getWindow().getDecorView().getWindowToken(), 0);
         }
     }
 
+    private void showProgressBar(){
+        if(mProgressBar !=null){
+            mLayout.setBackgroundColor(getResources().getColor(R.color.color_back_ground_for_waitting_search));
+            mProgressBar.setVisibility(View.VISIBLE);
+        }
+    }
+
+    private void hideProgressBar(){
+        if(mProgressBar !=null){
+            mLayout.setBackgroundColor(getResources().getColor(R.color.color_back_ground_for_search_done));
+            mProgressBar.setVisibility(View.GONE);
+        }
+    }
+
+    private void cleardata(){
+        if(mSongs !=null) mSongs.clear();
+
+    }
+
+    @Override
+    public boolean onQueryTextSubmit(String query) {
+        cleardata();
+        tvNotResult.setVisibility(View.GONE);
+        presenter.getSongFromSearch(query);
+        showProgressBar();
+
+        return false;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String newText) {
+        return false;
+    }
+
+    @Override
+    public void onClick(View v) {
+        if(v.getId() == R.id.rv_search_fragment){
+            hideKeyboard(getActivity());
+        }
+    }
 }

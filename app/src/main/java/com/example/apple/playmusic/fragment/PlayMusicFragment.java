@@ -96,12 +96,10 @@ public class PlayMusicFragment extends Fragment implements GetImageFromUrl.IOnGe
     private DataSource.Factory mediaDataSourceFactory;
     private BandwidthMeter bandwidthMeter = new DefaultBandwidthMeter();
 
-    private ProgressBar mProgressBar;
     private TextView tvSongName, tvSinger;
     private Song song;
     private int position;
     private RelativeLayout mFrameLayout;
-    private ViewPager viewPager;
     int current = 0;
     Bitmap bitmap1;
 

@@ -55,7 +55,7 @@ public interface DataService {
 
     @FormUrlEncoded
     @POST("search.php")
-    Call<ArrayList<Song>> getSongFromSearch(@Field("songName") String songname);
+    Call<ArrayList<Song>> getSongFromSearch(@Field("songname") String songname);
 
     @GET("allPlaylist.php")
     Call<ArrayList<Playlist>> getAllPlaylist();
