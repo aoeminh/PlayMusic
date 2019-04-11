@@ -28,9 +28,8 @@ public class MainViewPagerAdapter extends FragmentStatePagerAdapter {
     @Nullable
     @Override
     public CharSequence getPageTitle(int position) {
-        return arrayTitle.get(position);
+        return "";
     }
-
     public void addFragment(Fragment fragment,String title){
         arrayFragment.add(fragment);
         arrayTitle.add(title);

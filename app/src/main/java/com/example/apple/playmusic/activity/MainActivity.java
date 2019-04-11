@@ -44,8 +44,8 @@ public class MainActivity extends AppCompatActivity {
         adapter.addFragment(new SearchFragment(),getString(R.string.title_search_fragment));
         viewPager.setAdapter(adapter);
         tabLayout.setupWithViewPager(viewPager);
-        Objects.requireNonNull(tabLayout.getTabAt(0)).setIcon(R.drawable.icontrangchu);
-        Objects.requireNonNull(tabLayout.getTabAt(1)).setIcon(R.drawable.iconsearch);
+        Objects.requireNonNull(tabLayout.getTabAt(0)).setIcon(R.drawable.ic_action_home);
+        Objects.requireNonNull(tabLayout.getTabAt(1)).setIcon(R.drawable.ic_action_search);
 
     }
 

@@ -7,5 +7,5 @@
     <string name="text_theme_category_fragment">CHỦ ĐỀ VÀ THỂ LOẠI</string>
     <string name="view_more_category_theme_fragment">Xem thêm</string>
     <string name="number_text">bài hát</string>
-    <string name="text_not_result">Not result</string>
+    <string name="text_not_result">No result</string>
 </resources>

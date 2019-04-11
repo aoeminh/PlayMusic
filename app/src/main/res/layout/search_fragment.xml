@@ -12,6 +12,7 @@
         android:layout_height="wrap_content"
         android:iconifiedByDefault="false"
         android:queryHint="Search song"
+        android:background="@color/background_toolbar_color"
         app:layout_constraintTop_toTopOf="parent" />
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rv_search_fragment"
@@ -30,8 +31,9 @@
         android:text="@string/text_not_result"
         android:visibility="gone"
         android:gravity="center"
-        android:textColor="#824242"
-        android:textSize="@dimen/_40ssp"
+        android:textColor="@color/text_color_not_result"
+        android:textSize="@dimen/_30ssp"
+        android:background="@color/color_back_ground_for_search_done"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:layout_editor_absoluteX="16dp" />
