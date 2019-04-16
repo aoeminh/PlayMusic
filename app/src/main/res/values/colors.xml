@@ -9,7 +9,7 @@
     <color name="text_color_view_more_playlist_fragmnt">#bababa</color>
     <color name="text_color_advertise">#ffffff</color>
     <color name="text_color_icon_item_playlist_fragmen">#ffff</color>
-    <color name="background_toolbar_color">#ed7c30</color>
+        <color name="background_toolbar_color">#ed7c30</color>
     <color name="text_color_not_result">#504f4f</color>
     <color name="color_back_ground_for_waitting_search">#80cacaca</color>
     <color name="color_back_ground_for_search_done">#FAFAFA</color>

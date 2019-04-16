@@ -34,7 +34,7 @@ public class AlbumFragment extends Fragment implements IViewCallback,IOnItemClic
     private View view;
     private IPresenterCallback presenter;
     private RecyclerView rvAlbumHot;
-    private TextView tvViewMore;
+    private TextView tv_title;
     private ArrayList<Album> albumList = new ArrayList<>();
     private AlbumHotAdapter adapter;
     @Nullable
@@ -49,10 +49,10 @@ public class AlbumFragment extends Fragment implements IViewCallback,IOnItemClic
 
     private void initView(View view){
         rvAlbumHot = view.findViewById(R.id.rv_album_hot);
-        tvViewMore = view.findViewById(R.id.tv_view_more_album_hot_fragment);
+        tv_title = view.findViewById(R.id.tv_title_album_fragment);
         presenter = new HomePresenter(this);
 
-        tvViewMore.setOnClickListener(view1 -> {
+        tv_title.setOnClickListener(view1 -> {
             Intent intent= new Intent(getActivity(), ListAlbumActivity.class);
             startActivity(intent);
         });

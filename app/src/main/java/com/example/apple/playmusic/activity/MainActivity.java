@@ -44,8 +44,39 @@ public class MainActivity extends AppCompatActivity {
         adapter.addFragment(new SearchFragment(),getString(R.string.title_search_fragment));
         viewPager.setAdapter(adapter);
         tabLayout.setupWithViewPager(viewPager);
-        Objects.requireNonNull(tabLayout.getTabAt(0)).setIcon(R.drawable.ic_action_home);
+        Objects.requireNonNull(tabLayout.getTabAt(0)).setIcon(R.drawable.icon_home_selected);
         Objects.requireNonNull(tabLayout.getTabAt(1)).setIcon(R.drawable.ic_action_search);
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                switch (tab.getPosition()){
+                    case 0:
+                        Objects.requireNonNull(tabLayout.getTabAt(0)).setIcon(R.drawable.icon_home_selected);
+                        break;
+                    case 1:
+                        Objects.requireNonNull(tabLayout.getTabAt(1)).setIcon(R.drawable.icon_search_selected);
+
+                }
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+                switch (tab.getPosition()){
+                    case 0:
+                        Objects.requireNonNull(tabLayout.getTabAt(0)).setIcon(R.drawable.icon_home_unselected);
+                        break;
+                    case 1:
+                        Objects.requireNonNull(tabLayout.getTabAt(1)).setIcon(R.drawable.icon_search_unselected);
+
+
+                }
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
 
     }
 

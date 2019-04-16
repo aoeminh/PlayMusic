@@ -4,8 +4,10 @@
     <string name="title_search_fragment">Search</string>
     <string name="text_title_playlist_fragment">Bolero hôm nay</string>
     <string name="text_view_more_playlist_fragment">Xem thêm playlist</string>
-    <string name="text_theme_category_fragment">CHỦ ĐỀ VÀ THỂ LOẠI</string>
+    <string name="text_theme_category_fragment">Chủ đề và thể loại</string>
     <string name="view_more_category_theme_fragment">Xem thêm</string>
     <string name="number_text">bài hát</string>
     <string name="text_not_result">No result</string>
+    <string name="album_hot">Album hot</string>
+    <string name="text_may_like">Có thể bạn thích</string>
 </resources>

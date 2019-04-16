@@ -20,7 +20,6 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="0.8"
-        app:tabIndicatorColor="@color/tabIndicator_color_main"
         app:tabMode="fixed"
         app:tabTextColor="@color/tab_text_color_main"
         android:background="@android:color/transparent"

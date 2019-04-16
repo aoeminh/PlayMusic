@@ -40,7 +40,7 @@ public class CategoryThemeFragment extends Fragment implements IViewCallback,IOn
     private CategoryTheme categoryTheme;
     View view;
     private RecyclerView rvCategoryTheme;
-    private TextView tvViewMore;
+    private TextView tvTitle;
     private CategoryThemeAdapter  adapter;
     @Nullable
     @Override
@@ -53,10 +53,10 @@ public class CategoryThemeFragment extends Fragment implements IViewCallback,IOn
 
     private void initView(View view){
         rvCategoryTheme = view.findViewById(R.id.rv_category_theme_day);
-        tvViewMore = view.findViewById(R.id.tv_view_more_category_theme_fragment);
+        tvTitle = view.findViewById(R.id.tv_title_theme_fragment);
         presenter = new HomePresenter(this);
 
-        tvViewMore.setOnClickListener(view1 -> {
+        tvTitle.setOnClickListener(view1 -> {
             Intent intent = new Intent(getActivity(), ListThemeActivity.class);
             startActivity(intent);
         });

@@ -64,13 +64,12 @@ public  class DayPlaylistFragment extends Fragment implements IViewCallback, IOn
 
     private void initView(View view){
         tvTitle = view.findViewById(R.id.tv_title_playlist);
-        tvViewMore = view.findViewById(R.id.tv_viewmore_playlist_fragment);
         rv_playlist = view.findViewById(R.id.rv_day_playlist);
         presenterCallback = new HomePresenter(this);
     }
 
     private void setAction(){
-        tvViewMore.setOnClickListener(view1 -> {
+        tvTitle.setOnClickListener(view1 -> {
             Intent intent = new Intent(getActivity(), ListPlaylistActivity.class);
             startActivity(intent);
         });
