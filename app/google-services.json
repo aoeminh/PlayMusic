@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "506223076063",
+    "firebase_url": "https://boleromusic-474ed.firebaseio.com",
+    "project_id": "boleromusic-474ed",
+    "storage_bucket": "boleromusic-474ed.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:506223076063:android:e5399b6b51484c56",
+        "android_client_info": {
+          "package_name": "com.example.apple.playmusic"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "506223076063-5477v3rrr6uaj47l1fat6veq99v787uj.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.apple.playmusic",
+            "certificate_hash": "c5de291c794d3e1fb4535a77c9ad73ec132905cf"
+          }
+        },
+        {
+          "client_id": "506223076063-9ki0nndd01fjrfncbkq9q68je222d6rm.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyClN4-16-5KRNleiFybWx39l3XUB9CxRYA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "506223076063-9ki0nndd01fjrfncbkq9q68je222d6rm.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
