@@ -11,30 +11,54 @@
         android:orientation="vertical"
         android:paddingLeft="@dimen/_8sdp"
         android:weightSum="2">
-
-        <TextView
-            android:id="@+id/tv_song_name_item_search"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1"
-            android:gravity="center_vertical"
-            android:maxLines="2"
-            android:text="asfdfa"
-            android:textColor="@color/text_color_title_playlist_fragment"
-            android:textSize="@dimen/_15ssp"
-            android:textStyle="bold" />
+            android:layout_weight="1">
+            <ImageView
+                android:layout_width="@dimen/_25sdp"
+                android:layout_height="@dimen/_25sdp"
+                android:src="@drawable/ic_queue_music"
+                android:scaleType="fitXY"
+                />
+            <TextView
+                android:id="@+id/tv_song_name_item_search"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:maxLines="2"
+                android:text="asfdfa"
+                android:textColor="@color/text_color_title_playlist_fragment"
+                android:textSize="@dimen/_15ssp"
+                android:textStyle="bold" />
+        </LinearLayout>
 
-        <TextView
-            android:id="@+id/tv_singer_item_search"
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_marginRight="@dimen/margin_right_song_content"
-            android:layout_weight="1"
-            android:ellipsize="end"
-            android:maxLines="1"
-            android:text="Duyen phan"
-            android:textColor="#000"
-            android:textSize="@dimen/_13ssp" />
+            android:layout_weight="1">
+            <ImageView
+                android:paddingTop="@dimen/_5sdp"
+                android:layout_width="@dimen/_15sdp"
+                android:layout_height="@dimen/_15sdp"
+                android:src="@drawable/icon_micro"
+                android:layout_marginEnd="@dimen/_10sdp"
+
+                />
+            <TextView
+                android:id="@+id/tv_singer_item_search"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginRight="@dimen/margin_right_song_content"
+
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:text="Duyen phan"
+                android:textColor="#000"
+                android:textSize="@dimen/_13ssp" />
+        </LinearLayout>
+
     </LinearLayout>
 
 </android.support.constraint.ConstraintLayout>

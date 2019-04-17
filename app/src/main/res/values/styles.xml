@@ -36,5 +36,8 @@
     <style name="Base.Widget.Design.TabLayout" parent="android:Widget">
         <item name="tabBackground">@drawable/tab_background</item>
     </style>
+    <style name="AppTheme.Orange">
+        <item name="colorAccent">#ed7c30</item> <!-- Whatever color you want-->
+    </style>
 
 </resources>
