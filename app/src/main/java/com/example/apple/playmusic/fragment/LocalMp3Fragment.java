@@ -28,6 +28,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.example.apple.playmusic.R;
+import com.example.apple.playmusic.Ultils.RequestPermision;
 import com.example.apple.playmusic.activity.MainActivity;
 import com.example.apple.playmusic.adapter.LocalListSongAdapter;
 import com.example.apple.playmusic.model.Song;
@@ -40,6 +41,12 @@ public class LocalMp3Fragment extends Fragment {
     Toolbar toolbar;
     ArrayList<Song> listSongLocal= new ArrayList<>();
     LocalListSongAdapter adapter;
+    boolean isRequest = false;
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        isRequest=RequestPermision.requestPermision(getActivity());
+    }
 
     @Nullable
     @Override
@@ -54,6 +61,9 @@ public class LocalMp3Fragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         initView(view);
         setupToolbar();
+        if(isRequest){
+            scanDeviceForMp3Files();
+        }
     }
 
     @Override
