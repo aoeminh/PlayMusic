@@ -76,8 +76,6 @@ public class SongListActivity extends AppCompatActivity implements ISongListView
         initView();
         initToolbar();
         getDataIntent();
-
-
     }
 
     private void initView() {
@@ -208,7 +206,7 @@ public class SongListActivity extends AppCompatActivity implements ISongListView
     public void showOptionDialog(int position){
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
 // add a list
-        String[] animals = {"Play", "Remove song"};
+        String[] animals = {"Play", "Remove song","Download"};
         builder.setItems(animals, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -228,6 +226,8 @@ public class SongListActivity extends AppCompatActivity implements ISongListView
                         songList.remove(position);
                         adapter.notifyDataSetChanged();
                         break;
+                    case 2:
+
                 }
             }
         });
