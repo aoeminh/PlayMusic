@@ -9,7 +9,7 @@
     <SearchView
         android:id="@+id/simpleSearchView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="?attr/actionBarSize"
         android:iconifiedByDefault="false"
         android:queryHint="Search song"
         android:background="@color/background_toolbar_color"

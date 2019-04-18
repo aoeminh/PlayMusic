@@ -10,4 +10,7 @@
     <string name="text_not_result">No result</string>
     <string name="album_hot">Album hot</string>
     <string name="text_may_like">Có thể bạn thích</string>
+    <string name="text_title_local_fragment">Nghe nhạc offline</string>
+    <string name="download">Download</string>
+    <string name="search">Search</string>
 </resources>

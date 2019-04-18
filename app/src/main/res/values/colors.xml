@@ -13,4 +13,5 @@
     <color name="text_color_not_result">#504f4f</color>
     <color name="color_back_ground_for_waitting_search">#80cacaca</color>
     <color name="color_back_ground_for_search_done">#FAFAFA</color>
+
 </resources>

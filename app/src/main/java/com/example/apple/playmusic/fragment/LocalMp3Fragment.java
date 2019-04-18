@@ -8,20 +8,73 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Bundle;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.example.apple.playmusic.R;
 import com.example.apple.playmusic.activity.MainActivity;
+import com.example.apple.playmusic.adapter.LocalListSongAdapter;
+import com.example.apple.playmusic.model.Song;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class LocalMp3Fragment extends Fragment {
+
+    Toolbar toolbar;
+    ArrayList<Song> listSongLocal= new ArrayList<>();
+    LocalListSongAdapter adapter;
+
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_local_mp3,container,false);
+        setHasOptionsMenu(true);
+        return view;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        initView(view);
+        setupToolbar();
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_toolbar_local_fragment,menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        return super.onOptionsItemSelected(item);
+    }
+
+    void initView(View view){
+        toolbar = view.findViewById(R.id.toolbar_local_fragment);
+
+    }
+    void setupToolbar(){
+        ((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);
+
+
+    }
 
     private List<String> scanDeviceForMp3Files(){
         String selection = MediaStore.Audio.Media.IS_MUSIC + " != 0";
