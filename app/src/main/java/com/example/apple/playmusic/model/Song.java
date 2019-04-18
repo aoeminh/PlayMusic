@@ -32,6 +32,9 @@ public class Song  implements Parcelable{
     @Expose
     private int likeNumber;
 
+    public Song(){
+
+    }
     protected Song(Parcel in) {
         songId = in.readInt();
         songName = in.readString();

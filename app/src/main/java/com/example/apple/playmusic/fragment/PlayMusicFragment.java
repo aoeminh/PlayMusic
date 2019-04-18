@@ -224,9 +224,6 @@ public class PlayMusicFragment extends Fragment implements GetImageFromUrl.IOnGe
     public void onResume() {
         super.onResume();
         Log.d(TAG, "onResume " + position);
-//        if (player == null && song != null) {
-//            initializePlayer(song.getSonglink());
-//        }
     }
 
     @Override

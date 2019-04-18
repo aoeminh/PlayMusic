@@ -47,10 +47,9 @@ public class LocalListSongAdapter extends RecyclerView.Adapter<LocalListSongAdap
         private TextView tvSongName,tvSingerName;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-
             tvSingerName = itemView.findViewById(R.id.tv_singer_item_local);
             tvSongName = itemView.findViewById(R.id.tv_song_name_item_local);
+            itemView.setOnClickListener(v -> mIOnItemClick.onClickItem(getAdapterPosition()));
         }
     }
-
 }

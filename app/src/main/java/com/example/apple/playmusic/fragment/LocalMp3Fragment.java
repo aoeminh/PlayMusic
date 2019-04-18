@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
@@ -17,6 +18,9 @@ import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -29,23 +33,31 @@ import android.widget.Toast;
 
 import com.example.apple.playmusic.R;
 import com.example.apple.playmusic.Ultils.RequestPermision;
+import com.example.apple.playmusic.action.IOnItemClick;
 import com.example.apple.playmusic.activity.MainActivity;
+import com.example.apple.playmusic.activity.PlayMusicActivity;
 import com.example.apple.playmusic.adapter.LocalListSongAdapter;
+import com.example.apple.playmusic.contract.ILocalPresenter;
+import com.example.apple.playmusic.contract.IlocalView;
 import com.example.apple.playmusic.model.Song;
+import com.example.apple.playmusic.presenter.LocalSongPresenter;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class LocalMp3Fragment extends Fragment {
+public class LocalMp3Fragment extends Fragment implements IlocalView, IOnItemClick {
 
     Toolbar toolbar;
     ArrayList<Song> listSongLocal= new ArrayList<>();
     LocalListSongAdapter adapter;
     boolean isRequest = false;
+    ILocalPresenter presenter;
+    RecyclerView rvLocalListView;
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         isRequest=RequestPermision.requestPermision(getActivity());
+
     }
 
     @Nullable
@@ -61,9 +73,9 @@ public class LocalMp3Fragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         initView(view);
         setupToolbar();
-        if(isRequest){
-            scanDeviceForMp3Files();
-        }
+        presenter = new LocalSongPresenter(this,getActivity());
+        presenter.getAllSongFromPhone(isRequest);
+
     }
 
     @Override
@@ -77,8 +89,12 @@ public class LocalMp3Fragment extends Fragment {
     }
 
     void initView(View view){
+        rvLocalListView = view.findViewById(R.id.rv_list_song_local);
         toolbar = view.findViewById(R.id.toolbar_local_fragment);
+        DividerItemDecoration itemDecorator = new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL);
+        itemDecorator.setDrawable(ContextCompat.getDrawable(getContext(), R.drawable.divider));
 
+        rvLocalListView.addItemDecoration(itemDecorator);
     }
     void setupToolbar(){
         ((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);
@@ -86,18 +102,19 @@ public class LocalMp3Fragment extends Fragment {
 
     }
 
-    private List<String> scanDeviceForMp3Files(){
+    private ArrayList<Song> scanDeviceForMp3Files(){
+        ArrayList<Song> songs = new ArrayList<>();
         String selection = MediaStore.Audio.Media.IS_MUSIC + " != 0";
         String[] projection = {
                 MediaStore.Audio.Media.TITLE,
                 MediaStore.Audio.Media.ARTIST,
                 MediaStore.Audio.Media.DATA,
                 MediaStore.Audio.Media.DISPLAY_NAME,
-                MediaStore.Audio.Media.DURATION
+                MediaStore.Audio.Media.DURATION,
+                MediaStore.Audio.Media.DATA
+
         };
         final String sortOrder = MediaStore.Audio.AudioColumns.TITLE + " COLLATE LOCALIZED ASC";
-        List<String> mp3Files = new ArrayList<>();
-
         Cursor cursor = null;
         try {
             Uri uri = android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
@@ -111,17 +128,16 @@ public class LocalMp3Fragment extends Fragment {
                     String path = cursor.getString(2);
                     String displayName  = cursor.getString(3);
                     String songDuration = cursor.getString(4);
+                    String data = cursor.getString(5);
                     cursor.moveToNext();
                     if(path != null && path.endsWith(".mp3")) {
-                        mp3Files.add(title);
+                        Song song =new Song();
+                        song.setSinger(artist);
+                        song.setSongName(title);
+                        song.setSonglink(data);
+                        songs.add(song);
                     }
                 }
-
-            }
-
-            // print to see list of mp3 files
-            for( String file : mp3Files) {
-                Log.i("minhnhnh", file);
             }
 
         } catch (Exception e) {
@@ -131,72 +147,26 @@ public class LocalMp3Fragment extends Fragment {
                 cursor.close();
             }
         }
-        return mp3Files;
-    }
-
-    public static final int MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 123;
-
-    public boolean checkPermissionREAD_EXTERNAL_STORAGE(
-            final Context context) {
-        int currentAPIVersion = Build.VERSION.SDK_INT;
-        if (currentAPIVersion >= android.os.Build.VERSION_CODES.M) {
-            if (ContextCompat.checkSelfPermission(context,
-                    Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                if (ActivityCompat.shouldShowRequestPermissionRationale(
-                        (Activity) context,
-                        Manifest.permission.READ_EXTERNAL_STORAGE)) {
-                    showDialog("External storage", context,
-                            Manifest.permission.READ_EXTERNAL_STORAGE);
-
-                } else {
-                    ActivityCompat
-                            .requestPermissions(
-                                    (Activity) context,
-                                    new String[] { Manifest.permission.READ_EXTERNAL_STORAGE },
-                                    MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE);
-                }
-                return false;
-            } else {
-                return true;
-            }
-
-        } else {
-            return true;
-        }
-    }
-    public void showDialog(final String msg, final Context context,
-                           final String permission) {
-        AlertDialog.Builder alertBuilder = new AlertDialog.Builder(context);
-        alertBuilder.setCancelable(true);
-        alertBuilder.setTitle("Permission necessary");
-        alertBuilder.setMessage(msg + " permission is necessary");
-        alertBuilder.setPositiveButton(android.R.string.yes,
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        ActivityCompat.requestPermissions((Activity) context,
-                                new String[] { permission },
-                                MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE);
-                    }
-                });
-        AlertDialog alert = alertBuilder.create();
-        alert.show();
+        return songs;
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode,
-                                           String[] permissions, int[] grantResults) {
-        switch (requestCode) {
-            case MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE:
-                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    // do your stuff
-                } else {
-                    Toast.makeText(getActivity(), "GET_ACCOUNTS Denied",
-                            Toast.LENGTH_SHORT).show();
-                }
-                break;
-            default:
-                super.onRequestPermissionsResult(requestCode, permissions,
-                        grantResults);
-        }
+    public void responseAllSongFromPhone(ArrayList<Song> song) {
+        listSongLocal = song;
+        adapter = new LocalListSongAdapter(getActivity(),listSongLocal,this);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
+        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        rvLocalListView.setLayoutManager(layoutManager);
+        rvLocalListView.setAdapter(adapter);
+    }
+
+    @Override
+    public void onClickItem(int position) {
+        ArrayList<Song> lovesongs = new ArrayList<>();
+        lovesongs.add(listSongLocal.get(position));
+        Intent intent = new Intent(getActivity(), PlayMusicActivity.class);
+        intent.putParcelableArrayListExtra("song",lovesongs);
+        startActivity(intent);
+
     }
 }
