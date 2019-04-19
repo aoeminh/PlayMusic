@@ -64,6 +64,7 @@ public class LocalSongPresenter implements ILocalPresenter {
                         songs.add(song);
                     }
                 }
+                Log.e("minhnhnh", songs.get(0).getSonglink());
             }
 
         } catch (Exception e) {

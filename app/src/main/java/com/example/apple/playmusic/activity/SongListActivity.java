@@ -26,6 +26,7 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.apple.playmusic.R;
+import com.example.apple.playmusic.Ultils.DownLoadFromUrl;
 import com.example.apple.playmusic.Ultils.GetImageFromUrl;
 import com.example.apple.playmusic.action.IOnItemClick;
 import com.example.apple.playmusic.adapter.SongListAdapter;
@@ -227,7 +228,9 @@ public class SongListActivity extends AppCompatActivity implements ISongListView
                         adapter.notifyDataSetChanged();
                         break;
                     case 2:
-
+                        DownLoadFromUrl downLoadFromUrl = new DownLoadFromUrl(SongListActivity.this);
+                        downLoadFromUrl.execute(songList.get(position).getSonglink());
+                        break;
                 }
             }
         });

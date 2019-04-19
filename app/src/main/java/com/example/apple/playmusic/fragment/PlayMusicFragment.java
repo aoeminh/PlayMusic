@@ -371,6 +371,9 @@ public class PlayMusicFragment extends Fragment implements GetImageFromUrl.IOnGe
                 mStateBuilder.setState(PlaybackStateCompat.STATE_PAUSED,
                         player.getCurrentPosition(), 1f);
                 Log.d("onPlayerStateChanged:", "PAUSED");
+            }else if(playbackState ==ExoPlayer.STATE_ENDED){
+                mStateBuilder.setState(PlaybackStateCompat.STATE_PAUSED,
+                        player.getCurrentPosition(), 1f);
             }
             if(isVisible){
                 mMediaSession.setPlaybackState(mStateBuilder.build());
@@ -521,7 +524,7 @@ public class PlayMusicFragment extends Fragment implements GetImageFromUrl.IOnGe
                 MediaButtonReceiver.buildMediaButtonPendingIntent(getActivity(),
                         PlaybackStateCompat.ACTION_PLAY_PAUSE));
 
-        NotificationCompat.Action restartAction = new NotificationCompat.Action(
+        NotificationCompat.Action previous = new NotificationCompat.Action(
                 R.drawable.exo_controls_previous, "Previou",
                 MediaButtonReceiver.buildMediaButtonPendingIntent(getActivity(),
                         PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS));
@@ -545,10 +548,9 @@ public class PlayMusicFragment extends Fragment implements GetImageFromUrl.IOnGe
                 .setOngoing(isCancel)
                 .setColorized(true)
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-                .addAction(nextAction)
-                .addAction(restartAction)
-
+                .addAction(previous)
                 .addAction(playPauseAction)
+                .addAction(nextAction)
                 .setStyle(new android.support.v4.media.app.NotificationCompat.MediaStyle()
                         .setMediaSession(token)
                         .setShowActionsInCompactView(0, 1, 2));
