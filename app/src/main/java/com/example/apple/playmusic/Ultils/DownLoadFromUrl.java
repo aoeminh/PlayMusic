@@ -6,6 +6,7 @@ import android.os.AsyncTask;
 import android.os.Environment;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.example.apple.playmusic.R;
@@ -18,15 +19,18 @@ import java.io.OutputStream;
 import java.net.URL;
 import java.net.URLConnection;
 
-public class DownLoadFromUrl extends AsyncTask<String, Integer, String> {
+public class DownLoadFromUrl extends AsyncTask<String, Integer, Boolean> {
     Context mContext;
     NotificationManagerCompat notificationManagerCompat;
-    NotificationCompat.Builder builder ;
+    NotificationCompat.Builder builder;
+    String filename="";
+    boolean isDownload = false;
 
     int MAX = 100;
     int CURRENT = 0;
-    public DownLoadFromUrl(Context context) {
+    public DownLoadFromUrl(Context context,String filename) {
         this.mContext = context;
+        this.filename =filename;
     }
 
     @Override
@@ -35,7 +39,7 @@ public class DownLoadFromUrl extends AsyncTask<String, Integer, String> {
         Toast.makeText(mContext," Bắt đầu tải xuống",Toast.LENGTH_SHORT).show();
         notificationManagerCompat = NotificationManagerCompat.from(mContext);
         builder = new NotificationCompat.Builder(mContext, "a");
-        builder.setContentTitle("download")
+        builder.setContentTitle("Download "+ filename)
                 .setOngoing(false)
                 .setContentText("Download in progress")
                 .setPriority(NotificationCompat.PRIORITY_LOW)
@@ -48,10 +52,15 @@ public class DownLoadFromUrl extends AsyncTask<String, Integer, String> {
     }
 
     @Override
-    protected String doInBackground(String... urlParams) {
+    protected Boolean doInBackground(String... urlParams) {
         int count;
+        File file = new File(mContext.getFilesDir(),filename);
+
         try {
-            String outputFile = Environment.getExternalStorageDirectory().getAbsolutePath() + "/recording";
+            if(file.exists()){
+                file.delete();
+                file.createNewFile();
+            }
             URL url = new URL(urlParams[0]);
             URLConnection connection = url.openConnection();
             connection.connect();
@@ -60,7 +69,7 @@ public class DownLoadFromUrl extends AsyncTask<String, Integer, String> {
 
             // downlod the file
             InputStream input = new BufferedInputStream(url.openStream());
-            OutputStream output = new FileOutputStream(outputFile);
+            OutputStream output = new FileOutputStream(file);
 
             byte data[] = new byte[1024];
 
@@ -77,22 +86,32 @@ public class DownLoadFromUrl extends AsyncTask<String, Integer, String> {
             output.close();
             input.close();
         } catch (Exception e) {
-            return "Fail";
+            return false;
         }
-        return "ok";
+        return true;
     }
 
     @Override
     protected void onProgressUpdate(Integer... values) {
         super.onProgressUpdate(values);
-        builder.setProgress(MAX, CURRENT, false);
-        notificationManagerCompat.notify(1, builder.build());
+        Log.d("minhnqq",""+ values[0]);
+        int newValue = values[0];
+        if(newValue > CURRENT){
+            CURRENT=newValue;
+            builder.setProgress(MAX, CURRENT, false);
+            notificationManagerCompat.notify(1, builder.build());
+        }
+
     }
 
     @Override
-    protected void onPostExecute(String s) {
-        super.onPostExecute(s);
-        if(s.equals("ok")){
+    protected void onPostExecute(Boolean aBoolean) {
+        super.onPostExecute(aBoolean);
+        if(builder !=null){
+            notificationManagerCompat.cancel(1);
+        }
+
+        if(aBoolean){
             Toast.makeText(mContext,"Tải xuống thành công",Toast.LENGTH_SHORT).show();
 
         }else {

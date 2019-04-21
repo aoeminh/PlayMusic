@@ -1,6 +1,8 @@
 package com.example.apple.playmusic.activity;
 
 import android.annotation.SuppressLint;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -228,7 +230,8 @@ public class SongListActivity extends AppCompatActivity implements ISongListView
                         adapter.notifyDataSetChanged();
                         break;
                     case 2:
-                        DownLoadFromUrl downLoadFromUrl = new DownLoadFromUrl(SongListActivity.this);
+                        DownLoadFromUrl downLoadFromUrl =
+                                new DownLoadFromUrl(SongListActivity.this,songList.get(position).getSongName());
                         downLoadFromUrl.execute(songList.get(position).getSonglink());
                         break;
                 }
