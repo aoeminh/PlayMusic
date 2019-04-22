@@ -58,6 +58,7 @@ import retrofit2.http.Url;
 public class SongListActivity extends AppCompatActivity implements ISongListViewCallback, IOnItemClick,
         GetImageFromUrl.IOnGetBitmap, SongListAdapter.OnOptionClick {
 
+    public static final String EXTRA_DOWNLOAD = "extra.download";
     private RecyclerView rvSonglist;
     private Toolbar toolbar;
     private AppBarLayout appBarLayout;
@@ -73,6 +74,7 @@ public class SongListActivity extends AppCompatActivity implements ISongListView
     private Theme theme;
     private Category category;
     private Album album;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
