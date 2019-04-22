@@ -12,6 +12,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.media.session.PlaybackState;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Environment;
 import android.os.Parcelable;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
@@ -230,9 +231,14 @@ public class SongListActivity extends AppCompatActivity implements ISongListView
                         adapter.notifyDataSetChanged();
                         break;
                     case 2:
-                        DownLoadFromUrl downLoadFromUrl =
-                                new DownLoadFromUrl(SongListActivity.this,songList.get(position).getSongName());
-                        downLoadFromUrl.execute(songList.get(position).getSonglink());
+                        if(isExternalStorageWritable()){
+                            DownLoadFromUrl downLoadFromUrl =
+                                    new DownLoadFromUrl(SongListActivity.this,songList.get(position).getSongName());
+                            downLoadFromUrl.execute(songList.get(position).getSonglink());
+                        }else {
+                            Toast.makeText(SongListActivity.this,"Bộ nhớ không  có sẵn",Toast.LENGTH_SHORT).show();
+                        }
+
                         break;
                 }
             }
@@ -241,5 +247,12 @@ public class SongListActivity extends AppCompatActivity implements ISongListView
 // create and show the alert dialog
         AlertDialog dialog = builder.create();
         dialog.show();
+    }
+    public boolean isExternalStorageWritable() {
+        String state = Environment.getExternalStorageState();
+        if (Environment.MEDIA_MOUNTED.equals(state)) {
+            return true;
+        }
+        return false;
     }
 }

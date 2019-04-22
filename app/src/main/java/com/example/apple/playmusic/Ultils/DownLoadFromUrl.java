@@ -41,7 +41,6 @@ public class DownLoadFromUrl extends AsyncTask<String, Integer, Boolean> {
         builder = new NotificationCompat.Builder(mContext, "a");
         builder.setContentTitle("Download "+ filename)
                 .setOngoing(false)
-                .setContentText("Download in progress")
                 .setPriority(NotificationCompat.PRIORITY_LOW)
                 .setSmallIcon(R.drawable.exo_icon_play);
 
@@ -54,7 +53,7 @@ public class DownLoadFromUrl extends AsyncTask<String, Integer, Boolean> {
     @Override
     protected Boolean doInBackground(String... urlParams) {
         int count;
-        File file = new File(mContext.getFilesDir(),filename);
+        File file = getPublicAlbumStorageDir(filename);
 
         try {
             if(file.exists()){
@@ -86,7 +85,7 @@ public class DownLoadFromUrl extends AsyncTask<String, Integer, Boolean> {
             output.close();
             input.close();
         } catch (Exception e) {
-            return false;
+            e.printStackTrace();
         }
         return true;
     }
@@ -104,18 +103,29 @@ public class DownLoadFromUrl extends AsyncTask<String, Integer, Boolean> {
 
     }
 
+
     @Override
     protected void onPostExecute(Boolean aBoolean) {
         super.onPostExecute(aBoolean);
         if(builder !=null){
             notificationManagerCompat.cancel(1);
         }
-
         if(aBoolean){
             Toast.makeText(mContext,"Tải xuống thành công",Toast.LENGTH_SHORT).show();
 
         }else {
             Toast.makeText(mContext,"Tải xuống thất bại",Toast.LENGTH_SHORT).show();
         }
+    }
+
+    public File getPublicAlbumStorageDir(String songname) {
+        // Get the directory for the user's public music directory.
+        // need add .mp3 to devide detech file
+        File file = new File(Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_MUSIC), songname + ".mp3");
+        if (!file.mkdirs()) {
+            Log.e("minhnqq", "Directory not created");
+        }
+        return file;
     }
 }
