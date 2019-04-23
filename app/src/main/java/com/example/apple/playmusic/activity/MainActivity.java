@@ -35,7 +35,12 @@ import java.util.List;
 import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
+    public static final int REQUEST_PERMISSION = 33;
+    public static String[] requiredPermissions = new String[]{
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
 
+    };
     TabLayout tabLayout;
     ViewPager viewPager;
     Connection connection;
@@ -122,54 +127,6 @@ public class MainActivity extends AppCompatActivity {
         unregisterReceiver(connection);
     }
 
-
-    private List<String> scanDeviceForMp3Files(){
-        String selection = MediaStore.Audio.Media.IS_MUSIC + " != 0";
-        String[] projection = {
-                MediaStore.Audio.Media.TITLE,
-                MediaStore.Audio.Media.ARTIST,
-                MediaStore.Audio.Media.DATA,
-                MediaStore.Audio.Media.DISPLAY_NAME,
-                MediaStore.Audio.Media.DURATION
-        };
-        final String sortOrder = MediaStore.Audio.AudioColumns.TITLE + " COLLATE LOCALIZED ASC";
-        List<String> mp3Files = new ArrayList<>();
-
-        Cursor cursor = null;
-        try {
-            Uri uri = android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
-            cursor = getContentResolver().query(uri, projection, selection, null, sortOrder);
-            if( cursor != null){
-                cursor.moveToFirst();
-
-                while( !cursor.isAfterLast() ){
-                    String title = cursor.getString(0);
-                    String artist = cursor.getString(1);
-                    String path = cursor.getString(2);
-                    String displayName  = cursor.getString(3);
-                    String songDuration = cursor.getString(4);
-                    cursor.moveToNext();
-                    if(path != null && path.endsWith(".mp3")) {
-                        mp3Files.add(title);
-                    }
-                }
-
-            }
-
-            // print to see list of mp3 files
-            for( String file : mp3Files) {
-                Log.i("minhnhnh", file);
-            }
-
-        } catch (Exception e) {
-            Log.e("minhnhnh", e.toString());
-        }finally{
-            if( cursor != null){
-                cursor.close();
-            }
-        }
-        return mp3Files;
-    }
     public boolean requestPermision(
             final Context context) {
         int currentAPIVersion = Build.VERSION.SDK_INT;

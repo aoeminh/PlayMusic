@@ -1,10 +1,14 @@
 package com.example.apple.playmusic.activity;
 
 import android.annotation.SuppressLint;
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -12,18 +16,23 @@ import android.graphics.drawable.BitmapDrawable;
 import android.media.session.PlaybackState;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Environment;
 import android.os.Parcelable;
+import android.support.annotation.RequiresApi;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationManagerCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -45,6 +54,7 @@ import com.example.apple.playmusic.model.Playlist;
 import com.example.apple.playmusic.model.Song;
 import com.example.apple.playmusic.model.Theme;
 import com.example.apple.playmusic.presenter.SongListPresenter;
+import com.example.apple.playmusic.service.DownLoadService;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -58,7 +68,11 @@ import retrofit2.http.Url;
 public class SongListActivity extends AppCompatActivity implements ISongListViewCallback, IOnItemClick,
         GetImageFromUrl.IOnGetBitmap, SongListAdapter.OnOptionClick {
 
-    public static final String EXTRA_DOWNLOAD = "extra.download";
+    public static final String EXTRA_DOWNLOAD_URL = "extra.download.url";
+    public static final String EXTRA_DOWNLOAD_FILE_NAME = "extra.download.filename";
+    public static final int MAX_VALUE = 100;
+    public static final String EXTRA_DOWNLOAD_PROCESS = "extra.download.process";
+    public static final String ACTION_DOWNLOAD_PROCESS = "action.download.process";
     private RecyclerView rvSonglist;
     private Toolbar toolbar;
     private AppBarLayout appBarLayout;
@@ -74,6 +88,9 @@ public class SongListActivity extends AppCompatActivity implements ISongListView
     private Theme theme;
     private Category category;
     private Album album;
+    private BroadcastReceiver downloadReceiver;
+    private NotificationCompat.Builder mBuilder;
+    private NotificationManagerCompat mNotificationManagerCompat;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,6 +99,7 @@ public class SongListActivity extends AppCompatActivity implements ISongListView
         initView();
         initToolbar();
         getDataIntent();
+        registerReceiver();
     }
 
     private void initView() {
@@ -234,9 +252,15 @@ public class SongListActivity extends AppCompatActivity implements ISongListView
                         break;
                     case 2:
                         if(isExternalStorageWritable()){
-                            DownLoadFromUrl downLoadFromUrl =
-                                    new DownLoadFromUrl(SongListActivity.this,songList.get(position).getSongName());
-                            downLoadFromUrl.execute(songList.get(position).getSonglink());
+//                            DownLoadFromUrl downLoadFromUrl =
+//                                    new DownLoadFromUrl(SongListActivity.this,songList.get(position).getSongName());
+//                            downLoadFromUrl.execute(songList.get(position).getSonglink());
+                            showDialogDownload(songList.get(position).getSongName());
+
+                            Intent intentDownload = new Intent(SongListActivity.this, DownLoadService.class);
+                            intentDownload.putExtra(EXTRA_DOWNLOAD_URL,songList.get(position).getSonglink());
+                            intentDownload.putExtra(EXTRA_DOWNLOAD_FILE_NAME,songList.get(position).getSongName());
+                            startService(intentDownload);
                         }else {
                             Toast.makeText(SongListActivity.this,"Bộ nhớ không  có sẵn",Toast.LENGTH_SHORT).show();
                         }
@@ -257,4 +281,81 @@ public class SongListActivity extends AppCompatActivity implements ISongListView
         }
         return false;
     }
+
+    private void registerReceiver(){
+        downloadReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                if (intent !=null){
+                    String action =intent.getAction();
+                    if(action.equals(ACTION_DOWNLOAD_PROCESS)){
+                        int processDownload = intent.getIntExtra(EXTRA_DOWNLOAD_PROCESS,0);
+                        updateDialogDownload(processDownload);
+                    }
+                }
+            }
+        };
+
+        IntentFilter intentFilter = new IntentFilter(ACTION_DOWNLOAD_PROCESS);
+        registerReceiver(downloadReceiver,intentFilter);
+    }
+
+    public void showDialogDownload(String filename){
+        Toast.makeText(this,"Bắt đầu download",Toast.LENGTH_SHORT).show();
+        mNotificationManagerCompat = NotificationManagerCompat.from(this);
+        mBuilder = new NotificationCompat.Builder(this,"a");
+
+        mBuilder.setContentTitle("Download "+filename)
+                    .setSmallIcon(R.drawable.exo_icon_play)
+                    .setOngoing(false)
+                    .setPriority(NotificationCompat.PRIORITY_LOW);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            createChannel();
+        }
+        mBuilder.setProgress(MAX_VALUE,0,false);
+        mNotificationManagerCompat.notify(1,mBuilder.build());
+    }
+
+    public void updateDialogDownload(int process){
+        Log.d("download", " download in process " + process);
+        mBuilder.setProgress(MAX_VALUE,process,false);
+        mNotificationManagerCompat.notify(1,mBuilder.build());
+        if (process==100){
+            cancleDialogDownload(1);
+        }
+    }
+
+    public void cancleDialogDownload(int id){
+        Toast.makeText(this,"Down load thành công",Toast.LENGTH_SHORT).show();
+        mNotificationManagerCompat.cancel( id);
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private void createChannel() {
+        NotificationManager mNotificationManager = (NotificationManager) this.getSystemService(NOTIFICATION_SERVICE);
+        // The id of the channel.
+        String id = "d";
+        // The user-visible name of the channel.
+        CharSequence name = "Media playback";
+        // The user-visible description of the channel.
+        String description = "Media playback controls";
+        int importance = NotificationManager.IMPORTANCE_LOW;
+        NotificationChannel mChannel = new NotificationChannel(id, name, importance);
+        // Configure the notification channel.
+        mChannel.setDescription(description);
+        mChannel.setShowBadge(false);
+        mChannel.setLockscreenVisibility(Notification.VISIBILITY_PUBLIC);
+        mNotificationManager.createNotificationChannel(mChannel);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if(mBuilder !=null && mNotificationManagerCompat !=null){
+            mNotificationManagerCompat.cancel(1);
+        }
+        unregisterReceiver(downloadReceiver);
+    }
+
 }

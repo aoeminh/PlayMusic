@@ -12,6 +12,10 @@ import android.support.v7.app.AlertDialog;
 import android.widget.Toast;
 
 public class RequestPermision {
+    private static String[] requestPermission = new String[]{
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                    Manifest.permission.READ_EXTERNAL_STORAGE
+    };
 
     public static final int MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 123;
     public static boolean requestPermision(
@@ -61,4 +65,17 @@ public class RequestPermision {
     }
 
 
+
+    public static boolean checkRequiredPermissions(Context context, String[] requiredPermissions) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+            return true;
+        }
+        for (String permission : requiredPermissions) {
+            if (ContextCompat.checkSelfPermission(context, permission)
+                    != PackageManager.PERMISSION_GRANTED) {
+                return false;
+            }
+        }
+        return true;
+    }
 }

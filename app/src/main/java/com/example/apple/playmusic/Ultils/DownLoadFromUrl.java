@@ -1,9 +1,13 @@
 package com.example.apple.playmusic.Ultils;
 
+import android.app.Notification;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Environment;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 import android.util.Log;
@@ -18,6 +22,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
 import java.net.URLConnection;
+
+import static android.content.Context.NOTIFICATION_SERVICE;
 
 public class DownLoadFromUrl extends AsyncTask<String, Integer, Boolean> {
     Context mContext;
@@ -38,13 +44,15 @@ public class DownLoadFromUrl extends AsyncTask<String, Integer, Boolean> {
         super.onPreExecute();
         Toast.makeText(mContext," Bắt đầu tải xuống",Toast.LENGTH_SHORT).show();
         notificationManagerCompat = NotificationManagerCompat.from(mContext);
-        builder = new NotificationCompat.Builder(mContext, "a");
+        builder = new NotificationCompat.Builder(mContext, "d");
         builder.setContentTitle("Download "+ filename)
                 .setOngoing(false)
                 .setPriority(NotificationCompat.PRIORITY_LOW)
                 .setSmallIcon(R.drawable.exo_icon_play);
 
-
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            createChannel();
+        }
         builder.setProgress(MAX, CURRENT, false);
         notificationManagerCompat.notify(1, builder.build());
 
@@ -127,5 +135,22 @@ public class DownLoadFromUrl extends AsyncTask<String, Integer, Boolean> {
             Log.e("minhnqq", "Directory not created");
         }
         return file;
+    }
+    @RequiresApi(Build.VERSION_CODES.O)
+    private void createChannel() {
+        NotificationManager mNotificationManager = (NotificationManager) mContext.getSystemService(NOTIFICATION_SERVICE);
+        // The id of the channel.
+        String id = "d";
+        // The user-visible name of the channel.
+        CharSequence name = "Media playback";
+        // The user-visible description of the channel.
+        String description = "Media playback controls";
+        int importance = NotificationManager.IMPORTANCE_LOW;
+        NotificationChannel mChannel = new NotificationChannel(id, name, importance);
+        // Configure the notification channel.
+        mChannel.setDescription(description);
+        mChannel.setShowBadge(false);
+        mChannel.setLockscreenVisibility(Notification.VISIBILITY_PUBLIC);
+        mNotificationManager.createNotificationChannel(mChannel);
     }
 }
