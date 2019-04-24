@@ -52,4 +52,10 @@ public class LocalListSongAdapter extends RecyclerView.Adapter<LocalListSongAdap
             itemView.setOnClickListener(v -> mIOnItemClick.onClickItem(getAdapterPosition()));
         }
     }
+
+    public void appendlist(ArrayList<Song> songs){
+        this.listSong = songs;
+        notifyDataSetChanged();
+    }
+
 }

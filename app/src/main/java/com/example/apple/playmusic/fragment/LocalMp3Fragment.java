@@ -46,6 +46,7 @@ import com.example.apple.playmusic.model.Song;
 import com.example.apple.playmusic.presenter.LocalSongPresenter;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 public class LocalMp3Fragment extends Fragment implements IlocalView, IOnItemClick {
@@ -56,6 +57,7 @@ public class LocalMp3Fragment extends Fragment implements IlocalView, IOnItemCli
     boolean isRequest = false;
     ILocalPresenter presenter;
     RecyclerView rvLocalListView;
+    ArrayList<Song> listTemp= new ArrayList<>();
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -104,6 +106,19 @@ public class LocalMp3Fragment extends Fragment implements IlocalView, IOnItemCli
 
             @Override
             public boolean onQueryTextChange(String newText) {
+                if(newText.isEmpty()) {
+                    listTemp = listSongLocal;
+                    adapter.appendlist(listTemp);
+                    Log.d("minhnn", "empty");
+                }
+
+                for(Song song: listSongLocal){
+                    if(song.getSongName().contains(newText)){
+                        listTemp.add(song);
+
+                    }
+                }
+                adapter.appendlist(listTemp);
                 return false;
             }
         });
@@ -127,54 +142,6 @@ public class LocalMp3Fragment extends Fragment implements IlocalView, IOnItemCli
         ((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);
 
 
-    }
-
-    private ArrayList<Song> scanDeviceForMp3Files(){
-        ArrayList<Song> songs = new ArrayList<>();
-        String selection = MediaStore.Audio.Media.IS_MUSIC + " != 0";
-        String[] projection = {
-                MediaStore.Audio.Media.TITLE,
-                MediaStore.Audio.Media.ARTIST,
-                MediaStore.Audio.Media.DATA,
-                MediaStore.Audio.Media.DISPLAY_NAME,
-                MediaStore.Audio.Media.DURATION,
-                MediaStore.Audio.Media.DATA
-
-        };
-        final String sortOrder = MediaStore.Audio.AudioColumns.TITLE + " COLLATE LOCALIZED ASC";
-        Cursor cursor = null;
-        try {
-            Uri uri = android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
-            cursor = getActivity().getContentResolver().query(uri, projection, selection, null, sortOrder);
-            if( cursor != null){
-                cursor.moveToFirst();
-
-                while( !cursor.isAfterLast() ){
-                    String title = cursor.getString(0);
-                    String artist = cursor.getString(1);
-                    String path = cursor.getString(2);
-                    String displayName  = cursor.getString(3);
-                    String songDuration = cursor.getString(4);
-                    String data = cursor.getString(5);
-                    cursor.moveToNext();
-                    if(path != null && path.endsWith(".mp3")) {
-                        Song song =new Song();
-                        song.setSinger(artist);
-                        song.setSongName(title);
-                        song.setSonglink(data);
-                        songs.add(song);
-                    }
-                }
-            }
-
-        } catch (Exception e) {
-            Log.e("minhnhnh", e.toString());
-        }finally{
-            if( cursor != null){
-                cursor.close();
-            }
-        }
-        return songs;
     }
 
     @Override
