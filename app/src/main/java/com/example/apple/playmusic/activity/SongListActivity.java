@@ -70,9 +70,11 @@ public class SongListActivity extends AppCompatActivity implements ISongListView
 
     public static final String EXTRA_DOWNLOAD_URL = "extra.download.url";
     public static final String EXTRA_DOWNLOAD_FILE_NAME = "extra.download.filename";
-    public static final int MAX_VALUE = 100;
     public static final String EXTRA_DOWNLOAD_PROCESS = "extra.download.process";
     public static final String ACTION_DOWNLOAD_PROCESS = "action.download.process";
+    private static final String CHANNEL_ID = "channel.id";
+    public static final int MAX_VALUE = 100;
+    public static final int NOTIFY_ID = 1;
     private RecyclerView rvSonglist;
     private Toolbar toolbar;
     private AppBarLayout appBarLayout;
@@ -116,15 +118,15 @@ public class SongListActivity extends AppCompatActivity implements ISongListView
         presenter = new SongListPresenter(this);
 
         btnPlay.setOnClickListener(view -> {
-            if(songList !=null && songList.size() >0){
-                Intent intent = new Intent(this,PlayMusicActivity.class);
+            if (songList != null && songList.size() > 0) {
+                Intent intent = new Intent(this, PlayMusicActivity.class);
                 Bundle bundle = new Bundle();
                 bundle.putParcelableArrayList("song", songList);
-                bundle.putInt("position",0);
+                bundle.putInt("position", 0);
                 intent.putExtras(bundle);
                 startActivity(intent);
-            }else {
-                Toast.makeText(this,"No song in playlist",Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(this, "No song in playlist", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -158,7 +160,7 @@ public class SongListActivity extends AppCompatActivity implements ISongListView
                 mPlaylist = (Playlist) intent.getSerializableExtra(DayPlaylistFragment.EXTRA_PLAYLIST);
                 presenter.songlistFromPlaylist(String.valueOf(mPlaylist.getPlaylistId()));
                 setViewCollaplayout(mPlaylist.getPlaylistName(), mPlaylist.getPlaylistImage());
-            } else if (intent.hasExtra(CategoryThemeFragment.EXTRA_THEME) ) {
+            } else if (intent.hasExtra(CategoryThemeFragment.EXTRA_THEME)) {
                 theme = intent.getParcelableExtra(CategoryThemeFragment.EXTRA_THEME);
                 presenter.songlistFromTheme(String.valueOf(theme.getIdChude()));
                 setViewCollaplayout(theme.getTenChude(), theme.getHinhChude());
@@ -166,17 +168,17 @@ public class SongListActivity extends AppCompatActivity implements ISongListView
                 category = intent.getParcelableExtra(CategoryThemeFragment.EXTRA_CATEGORY);
                 presenter.songlistFromCategory(String.valueOf(category.getIdCategory()));
                 setViewCollaplayout(category.getCategoryName(), category.getCategoryImage());
-            }else if(intent.hasExtra(ListAlbumActivity.EXTRA_ALBUM)){
+            } else if (intent.hasExtra(ListAlbumActivity.EXTRA_ALBUM)) {
                 album = intent.getParcelableExtra(ListAlbumActivity.EXTRA_ALBUM);
                 presenter.songListFromAlbum(String.valueOf(album.getAlbumID()));
-                setViewCollaplayout(album.getAlbumName(),album.getAlbumImage());
+                setViewCollaplayout(album.getAlbumName(), album.getAlbumImage());
             }
         }
     }
 
-    void setValueRecyclerView(ArrayList<Song> songListrv){
+    void setValueRecyclerView(ArrayList<Song> songListrv) {
         songList = songListrv;
-        adapter = new SongListAdapter(this, songList, this,this);
+        adapter = new SongListAdapter(this, songList, this, this);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         rvSonglist.setAdapter(adapter);
@@ -227,10 +229,10 @@ public class SongListActivity extends AppCompatActivity implements ISongListView
         showOptionDialog(position);
     }
 
-    public void showOptionDialog(int position){
+    public void showOptionDialog(int position) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
 // add a list
-        String[] animals = {"Play", "Remove song","Download"};
+        String[] animals = {"Play", "Remove song", "Download"};
         builder.setItems(animals, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -239,10 +241,10 @@ public class SongListActivity extends AppCompatActivity implements ISongListView
 
                         ArrayList<Song> songs = new ArrayList<>();
                         songs.add(songList.get(position));
-                        Intent intent = new Intent(SongListActivity.this,PlayMusicActivity.class);
+                        Intent intent = new Intent(SongListActivity.this, PlayMusicActivity.class);
                         Bundle bundle = new Bundle();
-                        bundle.putParcelableArrayList("song",  songList);
-                        bundle.putInt("position",position);
+                        bundle.putParcelableArrayList("song", songList);
+                        bundle.putInt("position", position);
                         intent.putExtras(bundle);
                         startActivity(intent);
                         break;
@@ -251,18 +253,15 @@ public class SongListActivity extends AppCompatActivity implements ISongListView
                         adapter.notifyDataSetChanged();
                         break;
                     case 2:
-                        if(isExternalStorageWritable()){
-//                            DownLoadFromUrl downLoadFromUrl =
-//                                    new DownLoadFromUrl(SongListActivity.this,songList.get(position).getSongName());
-//                            downLoadFromUrl.execute(songList.get(position).getSonglink());
+                        if (isExternalStorageWritable()) {
                             showDialogDownload(songList.get(position).getSongName());
 
                             Intent intentDownload = new Intent(SongListActivity.this, DownLoadService.class);
-                            intentDownload.putExtra(EXTRA_DOWNLOAD_URL,songList.get(position).getSonglink());
-                            intentDownload.putExtra(EXTRA_DOWNLOAD_FILE_NAME,songList.get(position).getSongName());
+                            intentDownload.putExtra(EXTRA_DOWNLOAD_URL, songList.get(position).getSonglink());
+                            intentDownload.putExtra(EXTRA_DOWNLOAD_FILE_NAME, songList.get(position).getSongName());
                             startService(intentDownload);
-                        }else {
-                            Toast.makeText(SongListActivity.this,"Bộ nhớ không  có sẵn",Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(SongListActivity.this, "Bộ nhớ không  có sẵn", Toast.LENGTH_SHORT).show();
                         }
 
                         break;
@@ -274,6 +273,7 @@ public class SongListActivity extends AppCompatActivity implements ISongListView
         AlertDialog dialog = builder.create();
         dialog.show();
     }
+
     public boolean isExternalStorageWritable() {
         String state = Environment.getExternalStorageState();
         if (Environment.MEDIA_MOUNTED.equals(state)) {
@@ -282,14 +282,14 @@ public class SongListActivity extends AppCompatActivity implements ISongListView
         return false;
     }
 
-    private void registerReceiver(){
+    private void registerReceiver() {
         downloadReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                if (intent !=null){
-                    String action =intent.getAction();
-                    if(action.equals(ACTION_DOWNLOAD_PROCESS)){
-                        int processDownload = intent.getIntExtra(EXTRA_DOWNLOAD_PROCESS,0);
+                if (intent != null) {
+                    String action = intent.getAction();
+                    if (action.equals(ACTION_DOWNLOAD_PROCESS)) {
+                        int processDownload = intent.getIntExtra(EXTRA_DOWNLOAD_PROCESS, 0);
                         updateDialogDownload(processDownload);
                     }
                 }
@@ -297,51 +297,52 @@ public class SongListActivity extends AppCompatActivity implements ISongListView
         };
 
         IntentFilter intentFilter = new IntentFilter(ACTION_DOWNLOAD_PROCESS);
-        registerReceiver(downloadReceiver,intentFilter);
+        registerReceiver(downloadReceiver, intentFilter);
     }
 
-    public void showDialogDownload(String filename){
-        Toast.makeText(this,"Bắt đầu download",Toast.LENGTH_SHORT).show();
+    public void showDialogDownload(String filename) {
+        Toast.makeText(this, "Bắt đầu download", Toast.LENGTH_SHORT).show();
         mNotificationManagerCompat = NotificationManagerCompat.from(this);
-        mBuilder = new NotificationCompat.Builder(this,"a");
+        mBuilder = new NotificationCompat.Builder(this, CHANNEL_ID);
 
-        mBuilder.setContentTitle("Download "+filename)
-                    .setSmallIcon(R.drawable.exo_icon_play)
-                    .setOngoing(false)
-                    .setPriority(NotificationCompat.PRIORITY_LOW);
+        mBuilder.setContentTitle("Download " + filename)
+                .setSmallIcon(R.drawable.exo_icon_play)
+                .setOngoing(false)
+                .setPriority(NotificationCompat.PRIORITY_LOW);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             createChannel();
         }
-        mBuilder.setProgress(MAX_VALUE,0,false);
-        mNotificationManagerCompat.notify(1,mBuilder.build());
+        mBuilder.setProgress(MAX_VALUE, 0, false);
+        mNotificationManagerCompat.notify(NOTIFY_ID, mBuilder.build());
     }
 
-    public void updateDialogDownload(int process){
+    public void updateDialogDownload(int process) {
         Log.d("download", " download in process " + process);
-        mBuilder.setProgress(MAX_VALUE,process,false);
-        mNotificationManagerCompat.notify(1,mBuilder.build());
-        if (process==100){
-            cancleDialogDownload(1);
+        mBuilder.setProgress(MAX_VALUE, process, false);
+        mNotificationManagerCompat.notify(1, mBuilder.build());
+        if (process == 100) {
+            Toast.makeText(this, "Down load thành công", Toast.LENGTH_SHORT).show();
+            cancleDialogDownload(NOTIFY_ID);
         }
     }
 
-    public void cancleDialogDownload(int id){
-        Toast.makeText(this,"Down load thành công",Toast.LENGTH_SHORT).show();
-        mNotificationManagerCompat.cancel( id);
+    public void cancleDialogDownload(int id) {
+        if (mBuilder != null && mNotificationManagerCompat != null) {
+            mNotificationManagerCompat.cancel(id);
+        }
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
     private void createChannel() {
         NotificationManager mNotificationManager = (NotificationManager) this.getSystemService(NOTIFICATION_SERVICE);
         // The id of the channel.
-        String id = "d";
         // The user-visible name of the channel.
         CharSequence name = "Media playback";
         // The user-visible description of the channel.
         String description = "Media playback controls";
         int importance = NotificationManager.IMPORTANCE_LOW;
-        NotificationChannel mChannel = new NotificationChannel(id, name, importance);
+        NotificationChannel mChannel = new NotificationChannel(CHANNEL_ID, name, importance);
         // Configure the notification channel.
         mChannel.setDescription(description);
         mChannel.setShowBadge(false);
@@ -352,9 +353,7 @@ public class SongListActivity extends AppCompatActivity implements ISongListView
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if(mBuilder !=null && mNotificationManagerCompat !=null){
-            mNotificationManagerCompat.cancel(1);
-        }
+        cancleDialogDownload(NOTIFY_ID);
         unregisterReceiver(downloadReceiver);
     }
 
