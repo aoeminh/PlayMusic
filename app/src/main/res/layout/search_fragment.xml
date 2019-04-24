@@ -13,6 +13,7 @@
         android:iconifiedByDefault="false"
         android:queryHint="Search song"
         android:background="@color/background_toolbar_color"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
         app:layout_constraintTop_toTopOf="parent" />
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rv_search_fragment"
