@@ -40,4 +40,9 @@
         <item name="colorAccent">#ed7c30</item> <!-- Whatever color you want-->
     </style>
 
+    <style name="AppTheme.LocalActionBar" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
+        <item name="android:itemBackground">@color/color_background_menu_item</item>
+        <item name="android:textColor">@color/color_text_menu_item_local_fragment</item>
+    </style>
+
 </resources>

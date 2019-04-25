@@ -31,7 +31,9 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.SearchView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.apple.playmusic.R;
@@ -46,6 +48,8 @@ import com.example.apple.playmusic.model.Song;
 import com.example.apple.playmusic.presenter.LocalSongPresenter;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
@@ -57,6 +61,7 @@ public class LocalMp3Fragment extends Fragment implements IlocalView, IOnItemCli
     boolean isRequest = false;
     ILocalPresenter presenter;
     RecyclerView rvLocalListView;
+    TextView tvNotResult;
     ArrayList<Song> listTemp= new ArrayList<>();
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -106,19 +111,27 @@ public class LocalMp3Fragment extends Fragment implements IlocalView, IOnItemCli
 
             @Override
             public boolean onQueryTextChange(String newText) {
+                listTemp.clear();
                 if(newText.isEmpty()) {
-                    listTemp = listSongLocal;
+                    listTemp.addAll(listSongLocal);
                     adapter.appendlist(listTemp);
+                    tvNotResult.setVisibility(View.GONE);
                     Log.d("minhnn", "empty");
+                    return false;
                 }
 
                 for(Song song: listSongLocal){
-                    if(song.getSongName().contains(newText)){
+                    if(song.getSongName().toLowerCase().contains(newText.toLowerCase())){
                         listTemp.add(song);
 
                     }
                 }
                 adapter.appendlist(listTemp);
+                if(listTemp.size() ==0){
+                    tvNotResult.setVisibility(View.VISIBLE);
+                }else {
+                    tvNotResult.setVisibility(View.GONE);
+                }
                 return false;
             }
         });
@@ -126,11 +139,25 @@ public class LocalMp3Fragment extends Fragment implements IlocalView, IOnItemCli
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        if(item.getItemId() == R.id.item_filter_az){
+            Collections.sort(listTemp, new Comparator<Song>() {
+                @Override
+                public int compare(Song song1, Song song2) {
+
+                    return song1.getSongName().compareToIgnoreCase(song2.getSongName());
+
+                }
+            });
+            adapter.appendlist(listTemp);
+        }
+
+
         return super.onOptionsItemSelected(item);
 
     }
 
     void initView(View view){
+        tvNotResult = view.findViewById(R.id.tv_no_result_local_fragment);
         rvLocalListView = view.findViewById(R.id.rv_list_song_local);
         toolbar = view.findViewById(R.id.toolbar_local_fragment);
         DividerItemDecoration itemDecorator = new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL);
@@ -144,9 +171,18 @@ public class LocalMp3Fragment extends Fragment implements IlocalView, IOnItemCli
 
     }
 
+
+    private   void hideKeyboard(Activity activity) {
+        if (activity != null && activity.getWindow() != null && activity.getWindow().getDecorView() != null) {
+            InputMethodManager imm = (InputMethodManager)activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(activity.getWindow().getDecorView().getWindowToken(), 0);
+        }
+    }
+
     @Override
     public void responseAllSongFromPhone(ArrayList<Song> song) {
         listSongLocal = song;
+        listTemp = song;
         adapter = new LocalListSongAdapter(getActivity(),listSongLocal,this);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
@@ -162,5 +198,13 @@ public class LocalMp3Fragment extends Fragment implements IlocalView, IOnItemCli
         intent.putParcelableArrayListExtra("song",lovesongs);
         startActivity(intent);
 
+    }
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if(!getUserVisibleHint()){
+            hideKeyboard(getActivity());
+        }
     }
 }

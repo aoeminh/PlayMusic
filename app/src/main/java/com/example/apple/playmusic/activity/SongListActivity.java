@@ -99,6 +99,7 @@ public class SongListActivity extends AppCompatActivity implements ISongListView
     private BroadcastReceiver downloadReceiver;
     private NotificationCompat.Builder mBuilder;
     private NotificationManagerCompat mNotificationManagerCompat;
+    private boolean isDialogShowing = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -238,8 +239,8 @@ public class SongListActivity extends AppCompatActivity implements ISongListView
     public void showOptionDialog(int position) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
 // add a list
-        String[] animals = {"Play", "Remove song", "Download"};
-        builder.setItems(animals, new DialogInterface.OnClickListener() {
+        String[] options = {"Play", "Remove song", "Download"};
+        builder.setItems(options, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 switch (which) {
@@ -260,12 +261,16 @@ public class SongListActivity extends AppCompatActivity implements ISongListView
                         break;
                     case 2:
                         if (isExternalStorageWritable()) {
-                            showDialogDownload(songList.get(position).getSongName());
+                            if (!isDialogShowing){
+                                showDialogDownload(songList.get(position).getSongName());
+                                Intent intentDownload = new Intent(SongListActivity.this, DownLoadService.class);
+                                intentDownload.putExtra(EXTRA_DOWNLOAD_URL, songList.get(position).getSonglink());
+                                intentDownload.putExtra(EXTRA_DOWNLOAD_FILE_NAME, songList.get(position).getSongName());
+                                startService(intentDownload);
+                            }else {
+                                Toast.makeText(SongListActivity.this,"Đang tải xuống vui lòng đợi",Toast.LENGTH_SHORT).show();
+                            }
 
-                            Intent intentDownload = new Intent(SongListActivity.this, DownLoadService.class);
-                            intentDownload.putExtra(EXTRA_DOWNLOAD_URL, songList.get(position).getSonglink());
-                            intentDownload.putExtra(EXTRA_DOWNLOAD_FILE_NAME, songList.get(position).getSongName());
-                            startService(intentDownload);
                         } else {
                             Toast.makeText(SongListActivity.this, "Bộ nhớ không  có sẵn", Toast.LENGTH_SHORT).show();
                         }
@@ -307,6 +312,8 @@ public class SongListActivity extends AppCompatActivity implements ISongListView
     }
 
     public void showDialogDownload(String filename) {
+        isDialogShowing=true;
+        Log.d("minhnqa",filename);
         Toast.makeText(this, "Bắt đầu download", Toast.LENGTH_SHORT).show();
         mNotificationManagerCompat = NotificationManagerCompat.from(this);
         mBuilder = new NotificationCompat.Builder(this, CHANNEL_ID);
@@ -314,6 +321,7 @@ public class SongListActivity extends AppCompatActivity implements ISongListView
         mBuilder.setContentTitle("Download " + filename)
                 .setSmallIcon(R.drawable.exo_icon_play)
                 .setOngoing(false)
+                .
                 .setPriority(NotificationCompat.PRIORITY_LOW);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -336,6 +344,7 @@ public class SongListActivity extends AppCompatActivity implements ISongListView
     public void cancleDialogDownload(int id) {
         if (mBuilder != null && mNotificationManagerCompat != null) {
             mNotificationManagerCompat.cancel(id);
+            isDialogShowing =false;
         }
     }
 

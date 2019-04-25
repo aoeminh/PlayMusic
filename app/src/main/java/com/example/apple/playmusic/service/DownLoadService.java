@@ -26,12 +26,12 @@ public class DownLoadService extends IntentService {
     @Override
     protected void onHandleIntent(@Nullable Intent intent) {
         if (intent != null) {
-
             String strurl = intent.getStringExtra(SongListActivity.EXTRA_DOWNLOAD_URL);
             String filename = intent.getStringExtra(SongListActivity.EXTRA_DOWNLOAD_FILE_NAME);
             int count;
             File file = getPublicAlbumStorageDir(filename);
             Intent intentDownload = new Intent(SongListActivity.ACTION_DOWNLOAD_PROCESS);
+            Log.d("service",filename);
 
             try {
                 if (file.exists()) {
