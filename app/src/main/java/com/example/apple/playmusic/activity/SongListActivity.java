@@ -75,6 +75,7 @@ import retrofit2.http.Url;
 public class SongListActivity extends AppCompatActivity implements ISongListViewCallback, IOnItemClick,
         GetImageFromUrl.IOnGetBitmap, SongListAdapter.OnOptionClick {
 
+    public static final String TAG = "SongListActivity";
     public static final String EXTRA_DOWNLOAD_URL = "extra.download.url";
     public static final String EXTRA_DOWNLOAD_FILE_NAME = "extra.download.filename";
     public static final String EXTRA_DOWNLOAD_PROCESS = "extra.download.process";
@@ -101,6 +102,7 @@ public class SongListActivity extends AppCompatActivity implements ISongListView
     private NotificationCompat.Builder mBuilder;
     private NotificationManagerCompat mNotificationManagerCompat;
     private boolean isDialogShowing = false;
+    DownLoadFromUrl downLoadFromUrl;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -110,6 +112,21 @@ public class SongListActivity extends AppCompatActivity implements ISongListView
         initToolbar();
         getDataIntent();
         registerReceiver();
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        String action = intent.getAction();
+        if(action.equals("cancel")){
+            if(downLoadFromUrl !=null){
+                Log.d(TAG,"onClick cancel download");
+                downLoadFromUrl.cancel(true);
+                cancleDialogDownload(NOTIFY_ID);
+                Toast.makeText(this,"Hủy tải xuống",Toast.LENGTH_SHORT).show();
+            }
+        }
+
     }
 
     private void initView() {
@@ -263,12 +280,10 @@ public class SongListActivity extends AppCompatActivity implements ISongListView
                     case 2:
                         if (isExternalStorageWritable()) {
                             if (!isDialogShowing){
-                                showDialogDownload(songList.get(position).getSongName());
-                                Intent intentDownload = new Intent(SongListActivity.this, DownLoadService.class);
-                                intentDownload.setAction("download");
-                                intentDownload.putExtra(EXTRA_DOWNLOAD_URL, songList.get(position).getSonglink());
-                                intentDownload.putExtra(EXTRA_DOWNLOAD_FILE_NAME, songList.get(position).getSongName());
-                                startService(intentDownload);
+                                isDialogShowing =true;
+                                downLoadFromUrl = new DownLoadFromUrl(SongListActivity.this,songList.get(position).getSongName());
+                                downLoadFromUrl.execute(songList.get(position).getSonglink());
+
                             }else {
                                 Toast.makeText(SongListActivity.this,"Đang tải xuống vui lòng đợi",Toast.LENGTH_SHORT).show();
                             }
@@ -301,9 +316,8 @@ public class SongListActivity extends AppCompatActivity implements ISongListView
             public void onReceive(Context context, Intent intent) {
                 if (intent != null) {
                     String action = intent.getAction();
-                    if (action.equals(ACTION_DOWNLOAD_PROCESS)) {
-                        int processDownload = intent.getIntExtra(EXTRA_DOWNLOAD_PROCESS, 0);
-                        updateDialogDownload(processDownload);
+                    if (action.equals("end")) {
+                        isDialogShowing= intent.getBooleanExtra("end", false);
                     }
                 }
             }
@@ -316,7 +330,7 @@ public class SongListActivity extends AppCompatActivity implements ISongListView
     public void showDialogDownload(String filename) {
         isDialogShowing=true;
         Log.d("minhnqa",filename);
-        Toast.makeText(this, "Bắt đầu download", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "Bắt đầu tải xuống", Toast.LENGTH_SHORT).show();
         mNotificationManagerCompat = NotificationManagerCompat.from(this);
         mBuilder = new NotificationCompat.Builder(this, CHANNEL_ID);
         Intent downloadIntent = new Intent(this,DownLoadService.class);
@@ -340,7 +354,7 @@ public class SongListActivity extends AppCompatActivity implements ISongListView
         mBuilder.setProgress(MAX_VALUE, process, false);
         mNotificationManagerCompat.notify(1, mBuilder.build());
         if (process == 100) {
-            Toast.makeText(this, "Down load thành công", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Tải xuống thành công", Toast.LENGTH_SHORT).show();
             cancleDialogDownload(NOTIFY_ID);
         }
     }

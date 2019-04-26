@@ -28,7 +28,8 @@
             <meta-data android:name="android.app.searchable"
                 android:resource="@xml/searchable"/>
         </activity>
-        <activity android:name=".activity.SongListActivity" />
+        <activity android:name=".activity.SongListActivity"
+            android:launchMode="singleTask"/>
         <activity android:name=".activity.ListPlaylistActivity" />
         <activity android:name=".activity.ListThemeActivity" />
         <activity android:name=".activity.ListAlbumActivity"></activity>

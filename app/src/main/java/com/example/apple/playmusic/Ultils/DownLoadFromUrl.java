@@ -3,7 +3,9 @@ package com.example.apple.playmusic.Ultils;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Environment;
@@ -14,6 +16,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.example.apple.playmusic.R;
+import com.example.apple.playmusic.activity.SongListActivity;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -30,6 +33,7 @@ public class DownLoadFromUrl extends AsyncTask<String, Integer, Boolean> {
     NotificationManagerCompat notificationManagerCompat;
     NotificationCompat.Builder builder;
     String filename="";
+    File file;
     boolean isDownload = false;
 
     int MAX = 100;
@@ -47,6 +51,7 @@ public class DownLoadFromUrl extends AsyncTask<String, Integer, Boolean> {
         builder = new NotificationCompat.Builder(mContext, "d");
         builder.setContentTitle("Download "+ filename)
                 .setOngoing(false)
+                .addAction(R.drawable.exo_icon_play,"Cancel",createPendingIntent())
                 .setPriority(NotificationCompat.PRIORITY_LOW)
                 .setSmallIcon(R.drawable.exo_icon_play);
 
@@ -54,14 +59,14 @@ public class DownLoadFromUrl extends AsyncTask<String, Integer, Boolean> {
             createChannel();
         }
         builder.setProgress(MAX, CURRENT, false);
-        notificationManagerCompat.notify(1, builder.build());
+        notificationManagerCompat.notify(SongListActivity.NOTIFY_ID, builder.build());
 
     }
 
     @Override
     protected Boolean doInBackground(String... urlParams) {
         int count;
-        File file = getPublicAlbumStorageDir(filename);
+         file = getPublicAlbumStorageDir(filename);
 
         try {
             if(file.exists()){
@@ -106,7 +111,7 @@ public class DownLoadFromUrl extends AsyncTask<String, Integer, Boolean> {
         if(newValue > CURRENT){
             CURRENT=newValue;
             builder.setProgress(MAX, CURRENT, false);
-            notificationManagerCompat.notify(1, builder.build());
+            notificationManagerCompat.notify(SongListActivity.NOTIFY_ID, builder.build());
         }
 
     }
@@ -115,6 +120,9 @@ public class DownLoadFromUrl extends AsyncTask<String, Integer, Boolean> {
     @Override
     protected void onPostExecute(Boolean aBoolean) {
         super.onPostExecute(aBoolean);
+        Intent endDownloadIntent = new Intent("end");
+        endDownloadIntent.putExtra("end",false);
+        mContext.sendBroadcast(endDownloadIntent);
         if(builder !=null){
             notificationManagerCompat.cancel(1);
         }
@@ -126,14 +134,22 @@ public class DownLoadFromUrl extends AsyncTask<String, Integer, Boolean> {
         }
     }
 
+    @Override
+    protected void onCancelled() {
+
+        super.onCancelled();
+        if(file.exists()) file.delete();
+        if(builder !=null){
+            notificationManagerCompat.cancel(1);
+        }
+    }
+
     public File getPublicAlbumStorageDir(String songname) {
         // Get the directory for the user's public music directory.
         // need add .mp3 to devide detech file
         File file = new File(Environment.getExternalStoragePublicDirectory(
                 Environment.DIRECTORY_MUSIC), songname + ".mp3");
-        if (!file.mkdirs()) {
-            Log.e("minhnqq", "Directory not created");
-        }
+
         return file;
     }
     @RequiresApi(Build.VERSION_CODES.O)
@@ -152,5 +168,13 @@ public class DownLoadFromUrl extends AsyncTask<String, Integer, Boolean> {
         mChannel.setShowBadge(false);
         mChannel.setLockscreenVisibility(Notification.VISIBILITY_PUBLIC);
         mNotificationManager.createNotificationChannel(mChannel);
+    }
+
+    public PendingIntent createPendingIntent(){
+        Intent intent = new Intent(mContext,SongListActivity.class);
+        intent.setAction("cancel");
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        PendingIntent pendingIntent = PendingIntent.getActivity(mContext,0,intent,PendingIntent.FLAG_CANCEL_CURRENT);
+        return pendingIntent;
     }
 }
