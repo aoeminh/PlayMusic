@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.SearchManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -264,6 +265,7 @@ public class SongListActivity extends AppCompatActivity implements ISongListView
                             if (!isDialogShowing){
                                 showDialogDownload(songList.get(position).getSongName());
                                 Intent intentDownload = new Intent(SongListActivity.this, DownLoadService.class);
+                                intentDownload.setAction("download");
                                 intentDownload.putExtra(EXTRA_DOWNLOAD_URL, songList.get(position).getSonglink());
                                 intentDownload.putExtra(EXTRA_DOWNLOAD_FILE_NAME, songList.get(position).getSongName());
                                 startService(intentDownload);
@@ -317,11 +319,13 @@ public class SongListActivity extends AppCompatActivity implements ISongListView
         Toast.makeText(this, "Bắt đầu download", Toast.LENGTH_SHORT).show();
         mNotificationManagerCompat = NotificationManagerCompat.from(this);
         mBuilder = new NotificationCompat.Builder(this, CHANNEL_ID);
-
+        Intent downloadIntent = new Intent(this,DownLoadService.class);
+        downloadIntent.setAction("cancel");
+        PendingIntent pendingIntent = PendingIntent.getService(this,1,downloadIntent,PendingIntent.FLAG_CANCEL_CURRENT);
         mBuilder.setContentTitle("Download " + filename)
                 .setSmallIcon(R.drawable.exo_icon_play)
                 .setOngoing(false)
-                .
+                .addAction(R.drawable.exo_icon_play,"Cancel",pendingIntent)
                 .setPriority(NotificationCompat.PRIORITY_LOW);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {

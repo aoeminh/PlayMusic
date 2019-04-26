@@ -26,51 +26,61 @@ public class DownLoadService extends IntentService {
     @Override
     protected void onHandleIntent(@Nullable Intent intent) {
         if (intent != null) {
-            String strurl = intent.getStringExtra(SongListActivity.EXTRA_DOWNLOAD_URL);
-            String filename = intent.getStringExtra(SongListActivity.EXTRA_DOWNLOAD_FILE_NAME);
-            int count;
-            File file = getPublicAlbumStorageDir(filename);
-            Intent intentDownload = new Intent(SongListActivity.ACTION_DOWNLOAD_PROCESS);
-            Log.d("service",filename);
+            String action = intent.getAction();
+            switch (action){
+                case "download":
+                    Log.d("service","download");
+                    String strurl = intent.getStringExtra(SongListActivity.EXTRA_DOWNLOAD_URL);
+                    String filename = intent.getStringExtra(SongListActivity.EXTRA_DOWNLOAD_FILE_NAME);
+                    int count;
+                    File file = getPublicAlbumStorageDir(filename);
+                    Intent intentDownload = new Intent(SongListActivity.ACTION_DOWNLOAD_PROCESS);
+                    Log.d("service",filename);
 
-            try {
-                if (file.exists()) {
-                    file.delete();
-                    file.createNewFile();
-                }
-                URL url = new URL(strurl);
-                URLConnection connection = url.openConnection();
-                connection.connect();
-                // this will be useful so that you can show a tipical 0-100% progress bar
-                int lenghtOfFile = connection.getContentLength();
+                    try {
+                        if (file.exists()) {
+                            file.delete();
+                            file.createNewFile();
+                        }
+                        URL url = new URL(strurl);
+                        URLConnection connection = url.openConnection();
+                        connection.connect();
+                        // this will be useful so that you can show a tipical 0-100% progress bar
+                        int lenghtOfFile = connection.getContentLength();
 
-                // downlod the file
-                InputStream input = new BufferedInputStream(url.openStream());
-                OutputStream output = new FileOutputStream(file);
+                        // downlod the file
+                        InputStream input = new BufferedInputStream(url.openStream());
+                        OutputStream output = new FileOutputStream(file);
 
-                byte data[] = new byte[1024];
+                        byte data[] = new byte[1024];
 
-                long total = 0;
-                int current = 0;
-                while ((count = input.read(data)) != -1) {
-                    total += count;
-                    // publishing the progress....
-                    int newValue= (int) (total * 100 / lenghtOfFile);
-                    if(newValue>current){
-                        current =newValue;
-                        intentDownload.putExtra(SongListActivity.EXTRA_DOWNLOAD_PROCESS,current);
-                        sendBroadcast(intentDownload);
+                        long total = 0;
+                        int current = 0;
+                        while ((count = input.read(data)) != -1) {
+                            total += count;
+                            // publishing the progress....
+                            int newValue= (int) (total * 100 / lenghtOfFile);
+                            if(newValue>current){
+                                current =newValue;
+                                intentDownload.putExtra(SongListActivity.EXTRA_DOWNLOAD_PROCESS,current);
+                                sendBroadcast(intentDownload);
+                            }
+                            output.write(data, 0, count);
+
+                        }
+
+                        output.flush();
+                        output.close();
+                        input.close();
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
-                    output.write(data, 0, count);
-
-                }
-
-                output.flush();
-                output.close();
-                input.close();
-            } catch (Exception e) {
-                e.printStackTrace();
+                    break;
+                case "cancel":
+                    Log.d("service","cancel");
+                    stopSelf();
             }
+
         }
 
     }
