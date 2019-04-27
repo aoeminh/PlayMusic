@@ -182,7 +182,8 @@ public class LocalMp3Fragment extends Fragment implements IlocalView, IOnItemCli
     @Override
     public void responseAllSongFromPhone(ArrayList<Song> song) {
         listSongLocal = song;
-        listTemp = song;
+        listTemp.clear();
+        listTemp.addAll(song);
         adapter = new LocalListSongAdapter(getActivity(),listSongLocal,this);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
