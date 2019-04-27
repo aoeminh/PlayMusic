@@ -17,6 +17,7 @@ import android.widget.Toast;
 
 import com.example.apple.playmusic.R;
 import com.example.apple.playmusic.activity.SongListActivity;
+import com.example.apple.playmusic.model.Song;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -120,9 +121,7 @@ public class DownLoadFromUrl extends AsyncTask<String, Integer, Boolean> {
     @Override
     protected void onPostExecute(Boolean aBoolean) {
         super.onPostExecute(aBoolean);
-        Intent endDownloadIntent = new Intent("end");
-        endDownloadIntent.putExtra("end",false);
-        mContext.sendBroadcast(endDownloadIntent);
+      sendBroadcastEnd();
         if(builder !=null){
             notificationManagerCompat.cancel(1);
         }
@@ -138,10 +137,13 @@ public class DownLoadFromUrl extends AsyncTask<String, Integer, Boolean> {
     protected void onCancelled() {
 
         super.onCancelled();
+
         if(file.exists()) file.delete();
         if(builder !=null){
             notificationManagerCompat.cancel(1);
         }
+        sendBroadcastEnd();
+
     }
 
     public File getPublicAlbumStorageDir(String songname) {
@@ -176,5 +178,11 @@ public class DownLoadFromUrl extends AsyncTask<String, Integer, Boolean> {
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         PendingIntent pendingIntent = PendingIntent.getActivity(mContext,0,intent,PendingIntent.FLAG_CANCEL_CURRENT);
         return pendingIntent;
+    }
+
+    private void sendBroadcastEnd(){
+        Intent endDownloadIntent = new Intent(SongListActivity.ACTION_DOWNLOAD_CANCEL);
+        endDownloadIntent.putExtra(SongListActivity.EXTRA_DOWNLOAD_CANCEL,false);
+        mContext.sendBroadcast(endDownloadIntent);
     }
 }

@@ -80,6 +80,8 @@ public class SongListActivity extends AppCompatActivity implements ISongListView
     public static final String EXTRA_DOWNLOAD_FILE_NAME = "extra.download.filename";
     public static final String EXTRA_DOWNLOAD_PROCESS = "extra.download.process";
     public static final String ACTION_DOWNLOAD_PROCESS = "action.download.process";
+    public static final String ACTION_DOWNLOAD_CANCEL = "action.download.cancel";
+    public static final String EXTRA_DOWNLOAD_CANCEL = "extra.download.cancel";
     private static final String CHANNEL_ID = "channel.id";
     public static final int MAX_VALUE = 100;
     public static final int NOTIFY_ID = 1;
@@ -316,14 +318,14 @@ public class SongListActivity extends AppCompatActivity implements ISongListView
             public void onReceive(Context context, Intent intent) {
                 if (intent != null) {
                     String action = intent.getAction();
-                    if (action.equals("end")) {
-                        isDialogShowing= intent.getBooleanExtra("end", false);
+                    if (action.equals(ACTION_DOWNLOAD_CANCEL)) {
+                        isDialogShowing= intent.getBooleanExtra(EXTRA_DOWNLOAD_CANCEL, false);
                     }
                 }
             }
         };
 
-        IntentFilter intentFilter = new IntentFilter(ACTION_DOWNLOAD_PROCESS);
+        IntentFilter intentFilter = new IntentFilter(ACTION_DOWNLOAD_CANCEL);
         registerReceiver(downloadReceiver, intentFilter);
     }
 
